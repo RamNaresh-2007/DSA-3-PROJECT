@@ -1,5 +1,5 @@
 # EduTrack — Intelligent University Academic Platform & Live DSA Suite
-> **Advanced Data Structures & Algorithms (DSA-3 Project — Modules 1–3)**
+> **Advanced Data Structures & Algorithms (DSA-3 Project — Modules 1–6 Complete Suite)**
 > Single Source of Truth: `EduTrack.csv` (10,000 Academic Records)
 
 ---
@@ -62,10 +62,39 @@ edutrack/
 │   ├── TreeDP.java                          # Prerequisite tree diameter & max independent credit set
 │   └── SOSDP.java                           # Sum Over Subsets O(n · 2ⁿ) fast Walsh-Hadamard
 │
+├── flow/                                    # Module 4: Network Flow & Matching
+│   ├── FlowNetwork.java                     # Custom residual graph representation with forward & backward edges
+│   ├── FordFulkerson.java                   # Classical augmenting path max-flow framework
+│   ├── EdmondsKarp.java                     # BFS shortest-path augmenting max flow O(V E²)
+│   ├── Dinic.java                           # Layered network with blocking flows O(V² E)
+│   ├── MinCut.java                          # Min-Cut extraction via residual BFS reachability (Max-Flow Min-Cut theorem)
+│   ├── BipartiteMatching.java               # Maximum cardinality bipartite matching & König's vertex cover
+│   ├── MinCostMaxFlow.java                  # SPFA / Bellman-Ford successive shortest path with minimum cost
+│   └── FlowReductions.java                  # Project selection & maximum profit closure reduction
+│
+├── approx/                                  # Module 5: NP-Completeness & Approximation
+│   ├── ReductionZoo.java                    # Canonical reductions (3-SAT to CLIQUE, Vertex Cover, etc.)
+│   ├── VertexCoverApproximation.java        # 2-approximation maximal matching for minimum vertex cover
+│   ├── KnapsackApproximation.java           # Greedy 2-approximation & FPTAS (1 - ε) dynamic programming
+│   ├── ParameterizedVertexCover.java        # Fixed Parameter Tractability (FPT) Buss kernelization O(2^k · k^2 + n)
+│   └── NPHardnessAdvisor.java               # Automated complexity classifier and algorithmic strategy advisor
+│
+├── randomparallel/                          # Module 6: Randomised & Parallel Algorithms
+│   ├── MillerRabin.java                     # Probabilistic primality test with witnesses & Carmichael checks
+│   ├── RandomizedQuickSort.java             # Expected O(n log n) sorting with custom RNG pivot selection
+│   ├── UniversalHashing.java                # Carter-Wegman universal hash family with low collision guarantee
+│   ├── PerfectHashing.java                  # Fredman-Komlós-Szemerédi (FKS) two-level O(1) worst-case hashing
+│   ├── ReservoirSampling.java               # Alan Hole's Algorithm R for unbiased streaming random sampling
+│   └── ParallelPrimitives.java              # Blelloch parallel prefix scan, work-span analysis & Brent's theorem
+│
+├── corpus/                                  # TextHack English Corpus & Question Bank
+│   ├── IndicCorpus.java                     # Curated academic English articles & multithreaded question banks
+│   └── TextHackEngine.java                  # Corpus pattern mining, citation flow & fuzzy concept search
+│
 ├── engine/                                  # Central Query & Analytics Engine
-│   ├── EduTrackEngine.java                  # Central academic query engine executing all 18 query types
+│   ├── EduTrackEngine.java                  # Central academic query engine executing all 40+ query types
 │   ├── QueryResult.java                     # Structured query outcome with microsecond/nanosecond timings
-│   └── QueryType.java                       # Enumeration of all query classes
+│   └── QueryType.java                       # Enumeration of all query classes across Modules 1–6
 │
 ├── server/                                  # Embedded Web Server (Zero external dependencies)
 │   └── EduTrackWebServer.java               # Built-in Java HTTP server serving website & REST APIs
@@ -91,38 +120,38 @@ edutrack/
 │   └── Admin.java                           # University administrator credentials & clearance
 │
 ├── test/                                    # Automated Test Verification
-│   └── EduTrackTestRunner.java              # 92 unit and integration tests (All passing)
+│   └── EduTrackTestRunner.java              # 139 unit and integration tests covering Modules 1–6 (All passing)
 │
 └── web/                                     # State-of-the-Art Web Application
-    ├── index.html                           # Modern responsive university academic dashboard
-    ├── style.css                            # Glassmorphism dark-mode theme & animations
-    └── app.js                               # 10,000-records explorer & live DSA playground
+    ├── index.html                           # Modern responsive university academic dashboard with interactive visualizers
+    ├── style.css                            # Glassmorphism dark-mode theme, canvas styling & animations
+    └── app.js                               # 10,000-records explorer, visualizers & live DSA playground
 ```
 
 ---
 
 ## 🚀 How to Run
 
-### 1. Run the Web Application
-Compile and start the embedded web server (serves the website and live DSA REST APIs):
+### Quick Start (Windows)
+Double-click `run.bat` or execute in PowerShell / Terminal:
+```bat
+run.bat
+```
+This automatically compiles all 69 Java source files via `build.js` and launches the embedded server.
+
+### Manual Launch
 ```bash
 # Compile all Java sources
-javac -d bin (Get-ChildItem -Recurse -Filter *.java src | ForEach-Object { $_.FullName })
+node build.js
 
-# Launch Web Server
-java -cp bin edutrack.Main --server
+# Launch Web Server & Interactive CLI
+java -cp bin edutrack.Main
 ```
 Then open your browser at:
 👉 **`http://localhost:8000/web/index.html`** *(or `http://localhost:8080/web/index.html`)*
 
-### 2. Run the Interactive CLI
-To explore all 18 DSA academic services in the terminal:
-```bash
-java -cp bin edutrack.Main
-```
-
-### 3. Run the Automated Test Suite (92 Tests)
-To verify all hand-built data structures, algorithms, and `EduTrack.csv` ingestion:
+### Run the Automated Test Suite (139 Tests)
+To verify all hand-built data structures, algorithms, and `EduTrack.csv` ingestion across Modules 1–6:
 ```bash
 java -cp bin edutrack.test.EduTrackTestRunner
 ```
@@ -151,3 +180,20 @@ java -cp bin edutrack.test.EduTrackTestRunner
 | **CO3** | Advanced DP | `BitmaskDP.java` | Solves the Traveling Salesperson tour visiting university laboratory buildings with minimum distance. |
 | **CO3** | Advanced DP | `TreeDP.java` | Computes maximum credits achievable under course prerequisite dependency trees. |
 | **CO3** | Advanced DP | `SOSDP.java` | Fast Walsh-Hadamard submask aggregation analyzing student multi-course enrollments. |
+| **CO4** | Network Flow | `EdmondsKarp.java` & `Dinic.java` | Computes maximum student enrollment throughput & bottleneck capacities across campus pathways. |
+| **CO4** | Min-Cut | `MinCut.java` | Identifies critical bottleneck edges disconnecting campus resource networks (Max-Flow Min-Cut duality). |
+| **CO4** | Matching | `BipartiteMatching.java` | Assigns graduate teaching assistants & faculty to laboratory courses via maximum bipartite matching. |
+| **CO4** | Min-Cost Flow | `MinCostMaxFlow.java` | Optimizes campus bus routing and dorm room allocations minimizing total transit distance/cost. |
+| **CO4** | Closure | `FlowReductions.java` | Solves university project selection and grant allocation under prerequisite dependencies. |
+| **CO5** | Reductions | `ReductionZoo.java` | Demonstrates NP-Completeness polynomial reductions (3-SAT to CLIQUE, Independent Set, Vertex Cover). |
+| **CO5** | Approx Vertex Cover | `VertexCoverApproximation.java`| 2-Approximation algorithm for optimal campus surveillance camera placement. |
+| **CO5** | Approx Knapsack | `KnapsackApproximation.java` | Greedy 2-approximation and fully polynomial-time approximation scheme (FPTAS) for budget planning. |
+| **CO5** | FPT Kernel | `ParameterizedVertexCover.java` | Buss kernelization parameterized algorithm solving exact minimum security guard placements. |
+| **CO5** | NP Advisor | `NPHardnessAdvisor.java` | Intelligent complexity recommender classifying academic optimization problems. |
+| **CO6** | Primality | `MillerRabin.java` | High-confidence randomized primality verification for student credential hashing and crypto tokens. |
+| **CO6** | Randomized Sort | `RandomizedQuickSort.java` | Expected $O(n \log n)$ randomized quicksort with recursive recursion depth tracking. |
+| **CO6** | Universal Hashing | `UniversalHashing.java` | Carter-Wegman universal hashing family with bounded collision probabilities for student IDs. |
+| **CO6** | Perfect Hashing | `PerfectHashing.java` | FKS two-level perfect hash table guaranteeing $O(1)$ worst-case retrieval for master course registries. |
+| **CO6** | Streaming Sample | `ReservoirSampling.java` | Unbiased single-pass sampling of size $k$ from continuous live student attendance streams. |
+| **CO6** | Parallel Scan | `ParallelPrimitives.java` | Blelloch parallel prefix sum (scan), work-span metrics, and Brent's theorem speedup calculations. |
+| **Corpus** | English TextHack | `TextHackEngine.java` | Multi-document English corpus search, fuzzy concept matching, and citation network flow analytics. |

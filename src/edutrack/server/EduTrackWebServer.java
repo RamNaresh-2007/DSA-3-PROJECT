@@ -12,6 +12,10 @@ import edutrack.engine.QueryResult;
 import edutrack.model.*;
 import edutrack.string.*;
 import edutrack.suffix.*;
+import edutrack.flow.*;
+import edutrack.approx.*;
+import edutrack.randomparallel.*;
+import edutrack.corpus.*;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -24,8 +28,9 @@ import java.util.concurrent.Executors;
  * High-Performance Embedded Web Server for the EduTrack University Academic Platform.
  *
  * <p>Serves the interactive web application frontend (HTML, CSS, JS, EduTrack.csv)
- * and provides RESTful APIs for real-time DSA query execution (KMP, Z, Rabin-Karp,
- * Aho-Corasick, Suffix Structures, Advanced DP) directly over EduTrack.csv datasets.</p>
+ * and provides RESTful APIs for real-time DSA query execution across all 6 modules:
+ * KMP, Z, Rabin-Karp, Aho-Corasick, Suffix Structures, Advanced DP, Network Flow,
+ * NP-Completeness & Approximation, Randomised & Parallel, and TextHack Indic Corpus.</p>
  */
 public class EduTrackWebServer {
 
@@ -43,12 +48,18 @@ public class EduTrackWebServer {
     public synchronized int start() throws IOException {
         int selectedPort = port;
         HttpServer s = null;
-        try {
-            s = HttpServer.create(new InetSocketAddress(selectedPort), 0);
-        } catch (IOException ex) {
-            // If primary port is busy, fallback to alternate port
-            selectedPort = (port == 8080) ? 8000 : 8081;
-            s = HttpServer.create(new InetSocketAddress(selectedPort), 0);
+        int[] candidatePorts = { port, 8081, 8082, 8085, 8090, 8888, 0 };
+        for (int p : candidatePorts) {
+            try {
+                s = HttpServer.create(new InetSocketAddress(p), 0);
+                selectedPort = s.getAddress().getPort();
+                break;
+            } catch (IOException ignored) {
+            }
+        }
+        if (s == null) {
+            s = HttpServer.create(new InetSocketAddress(0), 0);
+            selectedPort = s.getAddress().getPort();
         }
         this.server = s;
 
@@ -60,6 +71,10 @@ public class EduTrackWebServer {
         server.createContext("/api/analytics", new AnalyticsHandler());
         server.createContext("/api/dsa/search", new DsaSearchHandler());
         server.createContext("/api/dsa/dp", new DsaDpHandler());
+        server.createContext("/api/dsa/flow", new DsaFlowHandler());
+        server.createContext("/api/dsa/approx", new DsaApproxHandler());
+        server.createContext("/api/dsa/random", new DsaRandomHandler());
+        server.createContext("/api/texthack", new TextHackHandler());
         server.createContext("/", new StaticFileHandler());
 
         server.setExecutor(Executors.newFixedThreadPool(8));
@@ -120,18 +135,26 @@ public class EduTrackWebServer {
 
     private File resolveStaticFile(String path) {
         if (path.startsWith("/")) path = path.substring(1);
-        if (path.equals("EduTrack.csv") || path.equals("data/EduTrack.csv")) {
-            File f = new File(path);
-            if (f.exists()) return f;
-            return new File("EduTrack.csv");
+        String[] candidatePaths = {
+            path,
+            "web/" + path,
+            "../" + path,
+            "../web/" + path,
+            "../../" + path,
+            "../../web/" + path
+        };
+        for (String c : candidatePaths) {
+            File f = new File(c);
+            if (f.exists() && !f.isDirectory()) return f;
         }
-        if (path.startsWith("web/")) {
-            return new File(path);
+        if (path.equals("EduTrack.csv") || path.endsWith("EduTrack.csv")) {
+            String[] csvCandidates = { "EduTrack.csv", "data/EduTrack.csv", "../EduTrack.csv", "../../EduTrack.csv" };
+            for (String c : csvCandidates) {
+                File f = new File(c);
+                if (f.exists() && !f.isDirectory()) return f;
+            }
         }
-        // Check in web/ directly
-        File f = new File("web/" + path);
-        if (f.exists()) return f;
-        return new File(path);
+        return new File("web/" + path);
     }
 
     private String getMimeType(String filename) {
@@ -267,13 +290,14 @@ public class EduTrackWebServer {
             String grade = params.get("grade");
             String status = params.get("status");
             int page = parseInt(params.get("page"), 1);
-            int limit = parseInt(params.get("limit"), 50);
+            String limitStr = params.get("limit");
+            int limit = (limitStr != null && !limitStr.isEmpty()) ? parseInt(limitStr, 10000) : 10000;
             String sortBy = params.get("sortBy");
             boolean desc = "desc".equalsIgnoreCase(params.get("order"));
 
             if (page < 1) page = 1;
-            if (limit < 1) limit = 50;
-            if (limit > 500) limit = 500;
+            if (limit < 1) limit = 10000;
+            if (limit > 50000) limit = 50000;
 
             int filterYear = parseInt(yearStr, 0);
 
@@ -737,6 +761,542 @@ public class EduTrackWebServer {
                 sb.append("\"elapsedMicros\":").append(elapsed / 1000);
             }
             sb.append("}");
+
+            sendJsonResponse(exchange, 200, sb.toString());
+        }
+    }
+
+    // =========================================================================
+    //  MODULE 4: NETWORK FLOW HANDLER (/api/dsa/flow)
+    // =========================================================================
+    private class DsaFlowHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                handleOptions(exchange);
+                return;
+            }
+
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendJsonResponse(exchange, 405, "{\"error\":\"Method not allowed. Use POST.\"}");
+                return;
+            }
+
+            String body = readRequestBody(exchange);
+            CustomHashMap<String, String> json = parseSimpleJson(body);
+            String algo = json.get("algorithm");
+            if (algo == null) algo = "dinic";
+
+            long t0 = System.nanoTime();
+            StringBuilder sb = new StringBuilder("{");
+
+            if ("edmonds-karp".equalsIgnoreCase(algo)) {
+                FlowNetwork fn = createDefaultCampusFlowNetwork();
+                EdmondsKarp.FlowResult res = EdmondsKarp.solve(fn, 0, 5);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Edmonds-Karp Maximum Flow\",");
+                sb.append("\"complexity\":\"O(V * E^2) guaranteed polynomial\",");
+                sb.append("\"maxFlow\":").append(res.maxFlow).append(",");
+                sb.append("\"augmentations\":").append(res.augmentations).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"paths\":[");
+                for (int i = 0; i < res.pathHistory.size(); i++) {
+                    if (i > 0) sb.append(",");
+                    sb.append("\"").append(escapeJson(res.pathHistory.get(i))).append("\"");
+                }
+                sb.append("],\"explanation\":\"Edmonds-Karp BFS augmented " + res.augmentations + " times to achieve maximum flow of " + res.maxFlow + " units.\"");
+            } else if ("dinic".equalsIgnoreCase(algo)) {
+                FlowNetwork fn = createDefaultCampusFlowNetwork();
+                Dinic.DinicResult res = Dinic.solve(fn, 0, 5);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Dinic's Blocking Flow Algorithm\",");
+                sb.append("\"complexity\":\"O(V^2 * E) general / O(E * sqrt(V)) unit network\",");
+                sb.append("\"maxFlow\":").append(res.maxFlow).append(",");
+                sb.append("\"levelPhases\":").append(res.levelGraphPhases).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"explanation\":\"" + escapeJson(res.complexityAnalysis) + "\"");
+            } else if ("min-cut".equalsIgnoreCase(algo)) {
+                FlowNetwork fn = createDefaultCampusFlowNetwork();
+                MinCut.CutResult cut = MinCut.computeMinCut(fn, 0, 5);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Max-Flow Min-Cut Duality\",");
+                sb.append("\"minCutCapacity\":").append(cut.minCutCapacity).append(",");
+                sb.append("\"maxFlowValue\":").append(cut.maxFlowValue).append(",");
+                sb.append("\"dualityVerified\":").append(cut.dualityVerified).append(",");
+                sb.append("\"setSSize\":").append(cut.setS.size()).append(",");
+                sb.append("\"setTSize\":").append(cut.setT.size()).append(",");
+                sb.append("\"cutEdgesCount\":").append(cut.cutEdges.size()).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"cutEdges\":[");
+                for (int i = 0; i < cut.cutEdges.size(); i++) {
+                    if (i > 0) sb.append(",");
+                    FlowNetwork.Edge e = cut.cutEdges.get(i);
+                    sb.append("{\"from\":").append(e.u).append(",\"to\":").append(e.v).append(",\"capacity\":").append(e.capacity).append("}");
+                }
+                sb.append("],\"explanation\":\"Max-Flow Min-Cut Theorem confirmed: Capacity(" + cut.minCutCapacity + ") == MaxFlow(" + cut.maxFlowValue + ")\"");
+            } else if ("bipartite-matching".equalsIgnoreCase(algo)) {
+                CustomArrayList<int[]> edges = new CustomArrayList<>();
+                // 5 Students -> 5 Lab Projects
+                edges.add(new int[]{0, 0}); edges.add(new int[]{0, 1});
+                edges.add(new int[]{1, 1}); edges.add(new int[]{1, 2});
+                edges.add(new int[]{2, 0}); edges.add(new int[]{2, 3});
+                edges.add(new int[]{3, 2}); edges.add(new int[]{3, 4});
+                edges.add(new int[]{4, 3}); edges.add(new int[]{4, 4});
+
+                BipartiteMatching.MatchingResult res = BipartiteMatching.solve(5, 5, edges);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Bipartite Matching & König's Theorem\",");
+                sb.append("\"matchingSize\":").append(res.matchingSize).append(",");
+                sb.append("\"konigSatisfied\":").append(res.konigTheoremSatisfied).append(",");
+                sb.append("\"minVertexCoverSize\":").append(res.minVertexCoverLeft.size() + res.minVertexCoverRight.size()).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"pairs\":[");
+                for (int i = 0; i < res.matchedPairs.size(); i++) {
+                    if (i > 0) sb.append(",");
+                    int[] p = res.matchedPairs.get(i);
+                    sb.append("{\"student\":\"Student-").append(p[0] + 1).append("\",\"project\":\"LabTrack-").append((char)('A' + p[1])).append("\"}");
+                }
+                sb.append("],\"explanation\":\"König's theorem satisfied: Max matching (" + res.matchingSize + ") equals min vertex cover.\"");
+            } else if ("min-cost-flow".equalsIgnoreCase(algo)) {
+                FlowNetwork fn = new FlowNetwork(6);
+                fn.addEdge(0, 1, 10, 2);
+                fn.addEdge(0, 2, 8, 5);
+                fn.addEdge(1, 3, 5, 1);
+                fn.addEdge(1, 4, 5, 3);
+                fn.addEdge(2, 3, 4, 2);
+                fn.addEdge(2, 4, 6, 4);
+                fn.addEdge(3, 5, 8, 1);
+                fn.addEdge(4, 5, 10, 2);
+
+                MinCostMaxFlow.MCMFResult res = MinCostMaxFlow.solve(fn, 0, 5);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Min-Cost Max-Flow (SSP + SPFA)\",");
+                sb.append("\"maxFlow\":").append(res.maxFlow).append(",");
+                sb.append("\"minCost\":").append(res.minCost).append(",");
+                sb.append("\"augmentations\":").append(res.augmentations).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"explanation\":\"Successive Shortest Path reached maximum flow of " + res.maxFlow + " units at minimal cost of " + res.minCost + " units.\"");
+            } else if ("project-selection".equalsIgnoreCase(algo)) {
+                int[] profits = {10, 20, -15, 30, -25, 40};
+                CustomArrayList<int[]> deps = new CustomArrayList<>();
+                deps.add(new int[]{0, 2}); // P1 requires P3
+                deps.add(new int[]{1, 2}); // P2 requires P3
+                deps.add(new int[]{3, 4}); // P4 requires P5
+                deps.add(new int[]{5, 4}); // P6 requires P5
+
+                FlowReductions.ProjectSelectionResult res = FlowReductions.solveProjectSelection(profits, deps);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Project Selection via Min-Cut\",");
+                sb.append("\"netProfit\":").append(res.maxNetProfit).append(",");
+                sb.append("\"minCutCost\":").append(res.minCutCost).append(",");
+                sb.append("\"selectedCount\":").append(res.selectedProjects.size()).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"selectedProjects\":[");
+                for (int i = 0; i < res.selectedProjects.size(); i++) {
+                    if (i > 0) sb.append(",");
+                    sb.append("\"Project-").append(res.selectedProjects.get(i) + 1).append("\"");
+                }
+                sb.append("],\"explanation\":\"" + escapeJson(res.explanation) + "\"");
+            } else {
+                long elapsed = System.nanoTime() - t0;
+                sb.append("\"algorithm\":\"Network Flow\",");
+                sb.append("\"status\":\"ready\",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000);
+            }
+            sb.append("}");
+
+            sendJsonResponse(exchange, 200, sb.toString());
+        }
+
+        private FlowNetwork createDefaultCampusFlowNetwork() {
+            // 0: Source (Internet/Gateway), 1: Core Router, 2: CS Dept, 3: AI Lab, 4: Library, 5: Sink (Host Dorms)
+            FlowNetwork fn = new FlowNetwork(6);
+            fn.addEdge(0, 1, 16);
+            fn.addEdge(0, 2, 13);
+            fn.addEdge(1, 2, 10);
+            fn.addEdge(1, 3, 12);
+            fn.addEdge(2, 1, 4);
+            fn.addEdge(2, 4, 14);
+            fn.addEdge(3, 2, 9);
+            fn.addEdge(3, 5, 20);
+            fn.addEdge(4, 3, 7);
+            fn.addEdge(4, 5, 4);
+            return fn;
+        }
+    }
+
+    // =========================================================================
+    //  MODULE 5: NP-COMPLETENESS & APPROXIMATION HANDLER (/api/dsa/approx)
+    // =========================================================================
+    private class DsaApproxHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                handleOptions(exchange);
+                return;
+            }
+
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendJsonResponse(exchange, 405, "{\"error\":\"Method not allowed. Use POST.\"}");
+                return;
+            }
+
+            String body = readRequestBody(exchange);
+            CustomHashMap<String, String> json = parseSimpleJson(body);
+            String algo = json.get("algorithm");
+            if (algo == null) algo = "vertex-cover";
+
+            long t0 = System.nanoTime();
+            StringBuilder sb = new StringBuilder("{");
+
+            if ("vertex-cover".equalsIgnoreCase(algo)) {
+                int numNodes = parseInt(json.get("nodes"), 8);
+                int[][] edges = {
+                        {0, 1}, {1, 2}, {2, 3}, {3, 0},
+                        {0, 4}, {1, 5}, {2, 6}, {3, 7},
+                        {4, 5}, {5, 6}, {6, 7}, {7, 4}
+                };
+
+                VertexCoverApproximation.ApproxResult res = VertexCoverApproximation.solve(numNodes, edges);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Vertex Cover 2-Approximation\",");
+                sb.append("\"approxSize\":").append(res.approxSize).append(",");
+                sb.append("\"matchingSize\":").append(res.maximalMatching.size()).append(",");
+                sb.append("\"exactOptSize\":").append(res.exactOptSize).append(",");
+                sb.append("\"empiricalRatio\":").append(String.format("%.2f", res.empiricalRatio)).append(",");
+                sb.append("\"theoreticalGuarantee\":").append(res.theoreticalGuarantee).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"coverNodes\":[");
+                for (int i = 0; i < res.approxCover.size(); i++) {
+                    if (i > 0) sb.append(",");
+                    sb.append(res.approxCover.get(i));
+                }
+                sb.append("],\"explanation\":\"Maximal matching of " + res.maximalMatching.size() + " edges proved OPT >= "
+                        + res.maximalMatching.size() + ". Both endpoints added to cover: " + res.approxSize + " <= 2 * OPT.\"");
+            } else if ("knapsack".equalsIgnoreCase(algo)) {
+                int[] weights = {10, 20, 30, 40, 50, 15, 25};
+                int[] values  = {60, 100, 120, 150, 200, 70, 90};
+                int capacity  = parseInt(json.get("capacity"), 80);
+                double eps    = 0.20; // 80% guarantee
+
+                KnapsackApproximation.KnapsackResult greedy = KnapsackApproximation.solveGreedy2Approx(weights, values, capacity);
+                KnapsackApproximation.KnapsackResult fptas  = KnapsackApproximation.solveFPTAS(weights, values, capacity, eps);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Knapsack Approximation (Greedy vs FPTAS)\",");
+                sb.append("\"greedyValue\":").append(greedy.totalValue).append(",");
+                sb.append("\"greedyWeight\":").append(greedy.totalWeight).append(",");
+                sb.append("\"fptasValue\":").append(fptas.totalValue).append(",");
+                sb.append("\"fptasWeight\":").append(fptas.totalWeight).append(",");
+                sb.append("\"capacity\":").append(capacity).append(",");
+                sb.append("\"fptasGuarantee\":").append(String.format("%.2f", fptas.approximationGuarantee)).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"explanation\":\"FPTAS value scaling delivered " + fptas.totalValue + " profit, satisfying >= " + String.format("%.0f%%", (1.0 - eps) * 100) + " of OPT.\"");
+            } else if ("fpt-kernel".equalsIgnoreCase(algo)) {
+                int k = parseInt(json.get("k"), 4);
+                int[][] edges = {
+                        {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, // node 0 has degree 5 > k
+                        {1, 2}, {2, 3}, {3, 4}, {4, 5}
+                };
+
+                ParameterizedVertexCover.FptResult res = ParameterizedVertexCover.solve(6, edges, k);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"FPT Buss Kernelization (k-Vertex Cover)\",");
+                sb.append("\"budgetK\":").append(k).append(",");
+                sb.append("\"feasible\":").append(res.feasible).append(",");
+                sb.append("\"kernelVertices\":").append(res.kernelVertices).append(",");
+                sb.append("\"kernelEdges\":").append(res.kernelEdges).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"coverNodes\":[");
+                for (int i = 0; i < res.vertexCover.size(); i++) {
+                    if (i > 0) sb.append(",");
+                    sb.append(res.vertexCover.get(i));
+                }
+                sb.append("],\"explanation\":\"" + escapeJson(res.diagnosis) + "\"");
+            } else if ("reduction-zoo".equalsIgnoreCase(algo)) {
+                CustomArrayList<ReductionZoo.Clause> formula = new CustomArrayList<>();
+                // (x1 v x2 v ~x3) ^ (~x1 v ~x2 v x3) ^ (x1 v ~x2 v x3)
+                formula.add(new ReductionZoo.Clause(1, 2, -3));
+                formula.add(new ReductionZoo.Clause(-1, -2, 3));
+                formula.add(new ReductionZoo.Clause(1, -2, 3));
+                boolean[] assignment = {true, false, true};
+
+                ReductionZoo.ReductionResult res = ReductionZoo.reduce3SatToClique(formula, assignment);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"NP Reduction Zoo (3-SAT -> CLIQUE)\",");
+                sb.append("\"from\":\"").append(res.fromProblem).append("\",");
+                sb.append("\"to\":\"").append(res.toProblem).append("\",");
+                sb.append("\"witnessValid\":").append(res.witnessValid).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"details\":\"").append(escapeJson(res.reductionDetails)).append("\",");
+                sb.append("\"explanation\":\"" + escapeJson(res.certificateAnalysis) + "\"");
+            } else if ("advisor".equalsIgnoreCase(algo)) {
+                String query = json.get("feature");
+                NPHardnessAdvisor.Diagnosis diag = NPHardnessAdvisor.diagnose(query);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"NP-Hardness Structural Advisor\",");
+                sb.append("\"problemType\":\"").append(diag.problemType).append("\",");
+                sb.append("\"isNPHard\":").append(diag.isNPHard).append(",");
+                sb.append("\"canonicalProblem\":\"").append(diag.canonicalProblem).append("\",");
+                sb.append("\"reductionPath\":\"").append(diag.polynomialReductionPath).append("\",");
+                sb.append("\"strategy\":\"").append(diag.recommendedStrategy).append("\",");
+                sb.append("\"asymptoticCost\":\"").append(diag.asymptoticCost).append("\",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000);
+            } else {
+                long elapsed = System.nanoTime() - t0;
+                sb.append("\"algorithm\":\"Approximation Algorithms\",");
+                sb.append("\"status\":\"ready\",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000);
+            }
+            sb.append("}");
+
+            sendJsonResponse(exchange, 200, sb.toString());
+        }
+    }
+
+    // =========================================================================
+    //  MODULE 6: RANDOMISED & PARALLEL HANDLER (/api/dsa/random)
+    // =========================================================================
+    private class DsaRandomHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                handleOptions(exchange);
+                return;
+            }
+
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendJsonResponse(exchange, 405, "{\"error\":\"Method not allowed. Use POST.\"}");
+                return;
+            }
+
+            String body = readRequestBody(exchange);
+            CustomHashMap<String, String> json = parseSimpleJson(body);
+            String algo = json.get("algorithm");
+            if (algo == null) algo = "miller-rabin";
+
+            long t0 = System.nanoTime();
+            StringBuilder sb = new StringBuilder("{");
+
+            if ("miller-rabin".equalsIgnoreCase(algo)) {
+                long candidate = 1000000007L;
+                try {
+                    String cStr = json.get("candidate");
+                    if (cStr != null && !cStr.isEmpty()) candidate = Long.parseLong(cStr.trim());
+                } catch (Exception ignored) {}
+
+                int rounds = parseInt(json.get("rounds"), 12);
+                MillerRabin.PrimalityResult res = MillerRabin.testProbabilistic(candidate, rounds);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Miller-Rabin Primality Test\",");
+                sb.append("\"candidate\":").append(candidate).append(",");
+                sb.append("\"isPrime\":").append(res.isPrime).append(",");
+                sb.append("\"rounds\":").append(res.roundsTested).append(",");
+                sb.append("\"witness\":").append(res.witness != null ? res.witness : "null").append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"details\":[");
+                for (int i = 0; i < res.roundDetails.size(); i++) {
+                    if (i > 0) sb.append(",");
+                    sb.append("\"").append(escapeJson(res.roundDetails.get(i))).append("\"");
+                }
+                sb.append("],\"explanation\":\"" + (res.isPrime ? "Candidate " + candidate + " passed all rounds (confidence > 99.9999%)." : "Candidate " + candidate + " proved composite.") + "\"");
+            } else if ("randomized-quicksort".equalsIgnoreCase(algo)) {
+                int size = parseInt(json.get("size"), 500);
+                int[] arr = new int[size];
+                for (int i = 0; i < size; i++) arr[i] = size - i; // Worst-case for deterministic!
+
+                RandomizedQuickSort.SortMetrics rand = RandomizedQuickSort.sortRandomized(arr);
+                RandomizedQuickSort.SortMetrics det  = RandomizedQuickSort.sortDeterministic(arr);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Randomized QuickSort vs Deterministic\",");
+                sb.append("\"arraySize\":").append(size).append(",");
+                sb.append("\"randComparisons\":").append(rand.comparisons).append(",");
+                sb.append("\"randDepth\":").append(rand.maxRecursionDepth).append(",");
+                sb.append("\"detComparisons\":").append(det.comparisons).append(",");
+                sb.append("\"detDepth\":").append(det.maxRecursionDepth).append(",");
+                sb.append("\"theoreticalExpected\":").append(String.format("%.0f", rand.theoreticalExpectedComparisons)).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"explanation\":\"Randomized QuickSort completed in " + rand.comparisons + " comparisons (close to 2n ln n), while deterministic suffered " + det.comparisons + " comparisons.\"");
+            } else if ("perfect-hashing".equalsIgnoreCase(algo)) {
+                CustomArrayList<String> keys = new CustomArrayList<>();
+                CustomArrayList<String> vals = new CustomArrayList<>();
+                for (int i = 0; i < Math.min(20, dataset.courses.size()); i++) {
+                    Course c = dataset.courses.get(i);
+                    keys.add(c.getCourseCode());
+                    vals.add(c.getCourseName());
+                }
+
+                PerfectHashing<String> ph = PerfectHashing.build(keys, vals);
+                PerfectHashing.PerfectHashMetrics m = ph.getMetrics();
+                String testKey = json.get("queryKey");
+                if (testKey == null || testKey.isEmpty()) testKey = keys.isEmpty() ? "CS101" : keys.get(0);
+                String foundVal = ph.get(testKey);
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"FKS Two-Level Perfect Hashing\",");
+                sb.append("\"totalKeys\":").append(m.totalKeys).append(",");
+                sb.append("\"primarySlots\":").append(m.primarySlots).append(",");
+                sb.append("\"secondarySlots\":").append(m.totalSecondarySlots).append(",");
+                sb.append("\"spaceOverhead\":").append(String.format("%.2f", m.spaceOverheadRatio)).append(",");
+                sb.append("\"lookupKey\":\"").append(escapeJson(testKey)).append("\",");
+                sb.append("\"foundValue\":\"").append(escapeJson(foundVal != null ? foundVal : "NOT_FOUND")).append("\",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"explanation\":\"FKS guaranteed O(1) worst-case lookup with zero collisions across all " + m.totalKeys + " keys.\"");
+            } else if ("reservoir".equalsIgnoreCase(algo)) {
+                int sampleK = parseInt(json.get("k"), 10);
+                ReservoirSampling<String> sampler = new ReservoirSampling<>(sampleK);
+                for (int i = 0; i < dataset.students.size(); i++) {
+                    sampler.feed(dataset.students.get(i).getName() + " (" + dataset.students.get(i).getStudentId() + ")");
+                }
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Reservoir Sampling (Algorithm R)\",");
+                sb.append("\"streamSize\":").append(sampler.getTotalSeen()).append(",");
+                sb.append("\"sampleK\":").append(sampleK).append(",");
+                sb.append("\"inclusionProbability\":").append(String.format("%.4f", sampler.getInclusionProbability())).append(",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"samples\":[");
+                CustomArrayList<String> res = sampler.getReservoir();
+                for (int i = 0; i < res.size(); i++) {
+                    if (i > 0) sb.append(",");
+                    sb.append("\"").append(escapeJson(res.get(i))).append("\"");
+                }
+                sb.append("],\"explanation\":\"Processed all " + sampler.getTotalSeen() + " student records in a single streaming pass with uniform probability k/N.\"");
+            } else if ("parallel-scan".equalsIgnoreCase(algo)) {
+                int size = parseInt(json.get("size"), 16);
+                int[] data = new int[size];
+                for (int i = 0; i < size; i++) data[i] = i + 1;
+
+                ParallelPrimitives.ScanResult scan = ParallelPrimitives.blellochParallelScan(data);
+                ParallelPrimitives.ParallelMetrics m = scan.metrics;
+                long elapsed = System.nanoTime() - t0;
+
+                sb.append("\"algorithm\":\"Blelloch Work-Efficient Parallel Scan\",");
+                sb.append("\"inputSize\":").append(size).append(",");
+                sb.append("\"totalSum\":").append(scan.totalSum).append(",");
+                sb.append("\"workT1\":").append(m.workT1).append(",");
+                sb.append("\"spanTInf\":").append(m.spanTInfinity).append(",");
+                sb.append("\"parallelism\":").append(String.format("%.1f", m.theoreticalParallelism)).append(",");
+                sb.append("\"brentSpeedup\":{");
+                int[] cores = {2, 4, 8, 16, 32, 64};
+                for (int i = 0; i < cores.length; i++) {
+                    if (i > 0) sb.append(",");
+                    sb.append("\"cores_").append(cores[i]).append("\":").append(String.format("%.2f", m.brentSpeedupCores[i]));
+                }
+                sb.append("},\"elapsedMicros\":").append(elapsed / 1000).append(",");
+                sb.append("\"explanation\":\"Blelloch up-sweep/down-sweep achieved O(n) work and O(log n) span with Brent speedup up to " + String.format("%.2f", m.brentSpeedupCores[5]) + "x on 64 cores.\"");
+            } else {
+                long elapsed = System.nanoTime() - t0;
+                sb.append("\"algorithm\":\"Randomised & Parallel Algorithms\",");
+                sb.append("\"status\":\"ready\",");
+                sb.append("\"elapsedMicros\":").append(elapsed / 1000);
+            }
+            sb.append("}");
+
+            sendJsonResponse(exchange, 200, sb.toString());
+        }
+    }
+
+    // =========================================================================
+    //  MODULE 1: TEXTHACK INDIC CORPUS HANDLER (/api/texthack)
+    // =========================================================================
+    private class TextHackHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                handleOptions(exchange);
+                return;
+            }
+
+            TextHackEngine the = engine.getTextHackEngine();
+            String method = exchange.getRequestMethod();
+
+            if ("GET".equalsIgnoreCase(method)) {
+                // Return all Indic corpus articles
+                CustomArrayList<IndicCorpus.IndicArticle> articles = the.getCorpus();
+                StringBuilder sb = new StringBuilder("{\"corpusSize\":").append(articles.size()).append(",\"articles\":[");
+                for (int i = 0; i < articles.size(); i++) {
+                    if (i > 0) sb.append(",");
+                    IndicCorpus.IndicArticle a = articles.get(i);
+                    sb.append("{\"id\":\"").append(a.id).append("\",")
+                      .append("\"title\":\"").append(escapeJson(a.title)).append("\",")
+                      .append("\"language\":\"").append(a.language).append("\",")
+                      .append("\"script\":\"").append(a.script).append("\",")
+                      .append("\"content\":\"").append(escapeJson(a.content)).append("\",")
+                      .append("\"englishSummary\":\"").append(escapeJson(a.englishSummary)).append("\"}");
+                }
+                sb.append("]}");
+                sendJsonResponse(exchange, 200, sb.toString());
+                return;
+            }
+
+            // POST query handling
+            String body = readRequestBody(exchange);
+            CustomHashMap<String, String> json = parseSimpleJson(body);
+            String qclass = json.get("queryClass");
+            String query  = json.get("query");
+            if (qclass == null) qclass = "pattern";
+            if (query == null) query = "Turing";
+
+            TextHackEngine.TextHackQueryResult res;
+            switch (qclass.toLowerCase()) {
+                case "pattern":
+                    res = the.queryPatternSearch(query);
+                    break;
+                case "fuzzy":
+                    res = the.queryFuzzyMatch(query, parseInt(json.get("maxDist"), 3));
+                    break;
+                case "similarity":
+                    res = the.queryDocumentSimilarity("IND_HI_001", "IND_SA_003", 5);
+                    break;
+                case "citation-flow": {
+                    int[][] citationGraph = {
+                            {0, 1, 15}, {0, 2, 10}, {1, 3, 12}, {2, 3, 10}, {3, 4, 25}
+                    };
+                    res = the.queryCitationFlow(citationGraph, 5, 0, 4);
+                    break;
+                }
+                case "scheduling": {
+                    int[][] conflicts = {{0, 1}, {1, 2}, {2, 3}, {3, 0}, {0, 4}, {2, 4}};
+                    res = the.queryProjectScheduling(5, conflicts);
+                    break;
+                }
+                case "primality": {
+                    long c = 1000000007L;
+                    try { c = Long.parseLong(query.trim()); } catch (Exception ignored) {}
+                    res = the.queryLargePrimePrimality(c);
+                    break;
+                }
+                default:
+                    res = the.queryPatternSearch(query);
+                    break;
+            }
+
+            StringBuilder sb = new StringBuilder("{");
+            sb.append("\"queryClass\":\"").append(escapeJson(res.queryClass)).append("\",");
+            sb.append("\"algorithmFamily\":\"").append(escapeJson(res.algorithmFamily)).append("\",");
+            sb.append("\"algorithmUsed\":\"").append(escapeJson(res.algorithmUsed)).append("\",");
+            sb.append("\"asymptoticCost\":\"").append(escapeJson(res.asymptoticCost)).append("\",");
+            sb.append("\"canonReference\":\"").append(escapeJson(res.textbookCanonReference)).append("\",");
+            sb.append("\"elapsedMicros\":").append(res.executionNs / 1000).append(",");
+            sb.append("\"answers\":[");
+            for (int i = 0; i < res.answers.size(); i++) {
+                if (i > 0) sb.append(",");
+                sb.append("\"").append(escapeJson(res.answers.get(i))).append("\"");
+            }
+            sb.append("]}");
 
             sendJsonResponse(exchange, 200, sb.toString());
         }

@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "edutrack.Main",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Run EduTrack (Web Server & CLI)",
+            "request": "launch",
+            "mainClass": "edutrack.Main",
+            "console": "integratedTerminal"
+        }
+    ]
+}

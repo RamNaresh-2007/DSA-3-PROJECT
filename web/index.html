@@ -3,100 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EduTrack — University Academic Platform & Live DSA Suite</title>
-  <meta name="description" content="EduTrack university academic directory and high-performance live DSA platform powered by EduTrack.csv 10,000-record dataset.">
-  <!-- Google Fonts -->
+  <title>EduTrack — Intelligent University Academic Platform</title>
+  <meta name="description" content="EduTrack university academic directory and high-performance live DSA platform powered by EduTrack.csv 10,000-record dataset with separate Student, Teacher, and Admin portals.">
+  <!-- Google Fonts: Clean Modern Sans-Serif Typography (Inter & JetBrains Mono) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M22 10v6M2 10l10-5 10 5-10 5z'/><path d='M6 12v5c3 3 9 3 12 0v-5'/></svg>">
-  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M22 10v6M2 10l10-5 10 5-10 5z'/><path d='M6 12v5c3 3 9 3 12 0v-5'/></svg>">
+  <link rel="stylesheet" href="style.css?v=updated-all-pics">
 </head>
 <body>
   <!-- App Container -->
-  <div class="app-layout">
+  <div class="app-layout" id="app-root" data-theme="oxford">
     <!-- Sidebar Navigation -->
     <aside class="sidebar" id="sidebar">
       <div class="brand">
-        <div class="brand-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div class="brand-crest">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
             <path d="M6 12v5c3 3 9 3 12 0v-5"/>
           </svg>
         </div>
         <div class="brand-text">
           <span class="brand-title">EduTrack</span>
-          <span class="brand-subtitle">Academic Intelligence</span>
+          <span class="brand-motto">Academic Management System</span>
+          <span class="brand-subtitle" id="sidebar-role-subtitle">Student Portal</span>
         </div>
       </div>
 
-      <nav class="nav-menu">
-        <button class="nav-item active" data-tab="dashboard" id="nav-dashboard">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="9"/>
-            <rect x="14" y="3" width="7" height="5"/>
-            <rect x="14" y="12" width="7" height="9"/>
-            <rect x="3" y="16" width="7" height="5"/>
-          </svg>
-          <span>Dashboard</span>
-        </button>
-
-        <button class="nav-item" data-tab="students" id="nav-students">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-          <span>Students Explorer</span>
-          <span class="nav-count" id="count-badge-students">10,000</span>
-        </button>
-
-        <button class="nav-item" data-tab="courses" id="nav-courses">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-          </svg>
-          <span>Course Catalog</span>
-          <span class="nav-count" id="count-badge-courses">12</span>
-        </button>
-
-        <button class="nav-item" data-tab="faculty" id="nav-faculty">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-          </svg>
-          <span>Faculty Directory</span>
-          <span class="nav-count" id="count-badge-faculty">10</span>
-        </button>
-
-        <button class="nav-item" data-tab="schedules" id="nav-schedules">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/>
-            <line x1="8" y1="2" x2="8" y2="6"/>
-            <line x1="3" y1="10" x2="21" y2="10"/>
-          </svg>
-          <span>Exams & Schedules</span>
-        </button>
-
-        <div class="nav-divider"></div>
-
-        <button class="nav-item highlight" data-tab="algorithms" id="nav-algorithms">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="16 18 22 12 16 6"/>
-            <polyline points="8 6 2 12 8 18"/>
-          </svg>
-          <span>DSA Live Suite</span>
-          <span class="nav-badge pulse">CO1-CO3</span>
-        </button>
-
-        <button class="nav-item" data-tab="admin" id="nav-admin">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
-          <span>Administration</span>
-        </button>
+      <!-- Dynamic Role-Specific Navigation Menu -->
+      <nav class="nav-menu" id="role-nav-menu">
+        <!-- Rendered dynamically by app.js based on active role -->
       </nav>
+
+      <!-- Quick 1-Click Role Switcher in Sidebar Footer -->
+      <div class="role-quick-switcher">
+        <div class="role-switch-title">
+          <span>Active Role</span>
+          <button class="btn btn-xs btn-outline" onclick="openAuthModal()" style="font-size:0.65rem;padding:2px 6px;">Login / Switch</button>
+        </div>
+        <div class="role-btn-group">
+          <button class="role-toggle-btn active" id="btn-role-student" onclick="switchRole('STUDENT')">🎓 Student</button>
+          <button class="role-toggle-btn" id="btn-role-teacher" onclick="switchRole('TEACHER')">👨‍🏫 Faculty</button>
+          <button class="role-toggle-btn" id="btn-role-admin" onclick="switchRole('ADMIN')">🛡️ Admin</button>
+        </div>
+      </div>
 
       <!-- System Status Footer -->
       <div class="sidebar-footer">
@@ -129,643 +80,1801 @@
         </div>
 
         <div class="header-right">
-          <!-- Live Engine Mode Badge -->
-          <div class="engine-mode-badge" id="engine-mode-badge" title="Click to test/refresh connection with Java Backend">
-            <span class="dot"></span>
-            <span id="engine-mode-label">Backend Connected</span>
+          <!-- Theme Switcher -->
+          <div class="theme-switcher-box" title="Select Theme">
+            <span class="theme-label">Theme:</span>
+            <div class="theme-buttons">
+              <button class="theme-btn active" id="theme-btn-oxford" onclick="setTheme('oxford')">Slate</button>
+              <button class="theme-btn" id="theme-btn-crimson" onclick="setTheme('crimson')">Navy</button>
+              <button class="theme-btn" id="theme-btn-academia" onclick="setTheme('academia')">Dark</button>
+            </div>
           </div>
 
-          <!-- Global Search Input -->
-          <div class="search-input-wrapper">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+          <!-- Global Search Box -->
+          <div class="search-bar">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8"/>
               <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input type="text" id="global-search" placeholder="Search 10,000 students (e.g. ET100000, Rahul, Algorithms)..." autocomplete="off">
-            <button class="clear-btn" id="global-search-clear" aria-label="Clear search" style="display:none;">&times;</button>
-          </div>
-
-          <!-- Header Actions -->
-          <div class="header-actions">
-            <button class="btn btn-secondary" id="export-csv-btn" title="Download current filtered dataset as CSV">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              <span>Export CSV</span>
+            <input type="text" id="global-search-input" placeholder="Search students, faculty, courses..." autocomplete="off">
+            <button class="search-btn" id="global-search-btn" aria-label="Run search">
+              <span class="shortcut-key">↵</span>
             </button>
           </div>
+
+          <!-- Current User Profile Chip with Role Badge -->
+          <div class="user-profile-chip" id="topbar-user-chip" onclick="openAuthModal()" title="Click to Switch User / Role">
+            <div class="user-avatar" id="topbar-user-avatar">AD</div>
+            <div class="user-info">
+              <span class="user-name" id="topbar-user-name">Aarav Das</span>
+              <span class="user-dept" id="topbar-user-dept">CSE · Year 4</span>
+            </div>
+            <span class="role-badge role-badge-student" id="topbar-role-badge">🎓 Student</span>
+          </div>
+
+          <button class="btn btn-sm btn-outline" onclick="openAuthModal()" style="display:flex;align-items:center;gap:6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            <span>Switch Role</span>
+          </button>
         </div>
       </header>
 
-      <!-- View Containers -->
-      <div class="content-body">
+      <!-- Content Container with Dynamic Tab Panes -->
+      <div class="content-container">
 
-        <!-- ======================================================== -->
-        <!-- TAB 1: DASHBOARD OVERVIEW -->
-        <!-- ======================================================== -->
-        <section class="tab-pane active" id="pane-dashboard">
-          <!-- KPI Metrics Row -->
-          <div class="stats-grid">
-            <div class="stat-card" onclick="switchTab('students')">
-              <div class="stat-icon bg-indigo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                  <circle cx="9" cy="7" r="4"/>
-                </svg>
-              </div>
-              <div class="stat-content">
-                <span class="stat-value" id="stat-total-students">10,000</span>
-                <span class="stat-label">Enrolled Students</span>
-              </div>
-              <div class="stat-badge" id="stat-students-sub">8 Depts • 4 Years</div>
-            </div>
+        <!-- ================================================================= -->
+        <!-- 1. STUDENT ROLE PANES                                              -->
+        <!-- ================================================================= -->
 
-            <div class="stat-card" onclick="switchTab('courses')">
-              <div class="stat-icon bg-cyan">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-                </svg>
-              </div>
-              <div class="stat-content">
-                <span class="stat-value" id="stat-total-courses">12</span>
-                <span class="stat-label">Curriculum Courses</span>
-              </div>
-              <div class="stat-badge">CS100 - CS111</div>
-            </div>
-
-            <div class="stat-card" onclick="switchTab('faculty')">
-              <div class="stat-icon bg-emerald">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                </svg>
-              </div>
-              <div class="stat-content">
-                <span class="stat-value" id="stat-total-faculty">10</span>
-                <span class="stat-label">Faculty Professors</span>
-              </div>
-              <div class="stat-badge">F100 - F109</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon bg-amber">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M12 6v6l4 2"/>
-                </svg>
-              </div>
-              <div class="stat-content">
-                <span class="stat-value" id="stat-pass-rate">94.8%</span>
-                <span class="stat-label">Academic Pass Rate</span>
-              </div>
-              <div class="stat-badge" id="stat-avg-cgpa">Avg CGPA: 7.42</div>
-            </div>
-          </div>
-
-          <!-- Charts & Distributions Grid -->
-          <div class="dashboard-grid">
-            <!-- Department Distribution Card -->
-            <div class="card glass-card">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">Department Enrollment & Performance</h2>
-                  <p class="card-subtitle">Distribution across CE, ECE, ME, EEE, AIML, CSE, AI&DS, and IT</p>
-                </div>
-                <span class="badge badge-accent">Live Breakdown</span>
-              </div>
-              <div class="card-body">
-                <div class="dept-distribution-list" id="dept-distribution-container">
-                  <!-- Populated by app.js -->
-                </div>
-              </div>
-            </div>
-
-            <!-- Grade & CGPA Distribution Card -->
-            <div class="card glass-card">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">Academic Grade Spectrum</h2>
-                  <p class="card-subtitle">Cumulative Grade Point Average (CGPA) tier analysis</p>
-                </div>
-                <span class="badge badge-success" id="overall-avg-cgpa">Dataset: EduTrack.csv</span>
-              </div>
-              <div class="card-body">
-                <div class="cgpa-tiers-grid" id="cgpa-tiers-container">
-                  <!-- Populated by app.js -->
-                </div>
-
-                <div class="top-performers-box mt-4">
-                  <h3 class="box-heading">Top Academic Performers (Dean's List Exemplars)</h3>
-                  <div class="performers-list" id="top-performers-list">
-                    <!-- Populated by app.js -->
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Academic Activity & Resources Breakdown -->
-          <div class="dashboard-grid mt-6">
-            <div class="card glass-card">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">Continuous Engagement Activities</h2>
-                  <p class="card-subtitle">Lab work, Quizzes, Library access, Submissions & Video lectures</p>
-                </div>
-                <span class="badge badge-cyan">7 Categories</span>
-              </div>
-              <div class="card-body">
-                <div class="activity-bars-grid" id="activity-distribution-container">
-                  <!-- Populated by app.js -->
-                </div>
-              </div>
-            </div>
-
-            <div class="card glass-card">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">Curriculum Resource Types</h2>
-                  <p class="card-subtitle">Digital textbooks, Question banks, Lab manuals, and Lecture notes</p>
-                </div>
-                <span class="badge badge-purple">6 Formats</span>
-              </div>
-              <div class="card-body">
-                <div class="resource-bars-grid" id="resource-distribution-container">
-                  <!-- Populated by app.js -->
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ======================================================== -->
-        <!-- TAB 2: STUDENTS EXPLORER (10,000 RECORDS) -->
-        <!-- ======================================================== -->
-        <section class="tab-pane" id="pane-students">
-          <!-- Toolbar -->
-          <div class="filter-toolbar">
-            <div class="filter-group">
-              <label for="student-dept-filter" class="filter-label">Dept:</label>
-              <select id="student-dept-filter" class="custom-select">
-                <option value="ALL">All Departments</option>
-                <option value="CSE">CSE</option>
-                <option value="ECE">ECE</option>
-                <option value="AI&DS">AI&DS</option>
-                <option value="AIML">AIML</option>
-                <option value="IT">IT</option>
-                <option value="ME">ME</option>
-                <option value="EEE">EEE</option>
-                <option value="CE">CE</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label for="student-year-filter" class="filter-label">Year:</label>
-              <select id="student-year-filter" class="custom-select">
-                <option value="ALL">All Years</option>
-                <option value="1">Year 1</option>
-                <option value="2">Year 2</option>
-                <option value="3">Year 3</option>
-                <option value="4">Year 4</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label for="student-grade-filter" class="filter-label">Grade:</label>
-              <select id="student-grade-filter" class="custom-select">
-                <option value="ALL">All Grades</option>
-                <option value="A+">Grade A+</option>
-                <option value="A">Grade A</option>
-                <option value="B">Grade B</option>
-                <option value="C">Grade C</option>
-                <option value="D">Grade D</option>
-                <option value="F">Grade F</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label for="student-status-filter" class="filter-label">Status:</label>
-              <select id="student-status-filter" class="custom-select">
-                <option value="ALL">All Statuses</option>
-                <option value="Pass">Pass</option>
-                <option value="Fail">Fail</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label for="student-sort" class="filter-label">Sort:</label>
-              <select id="student-sort" class="custom-select">
-                <option value="cgpa-desc">Highest CGPA &darr;</option>
-                <option value="cgpa-asc">Lowest CGPA &uarr;</option>
-                <option value="attendance-desc">Highest Attendance &darr;</option>
-                <option value="exam-desc">Highest Exam Score &darr;</option>
-                <option value="name-asc">Name (A &rarr; Z)</option>
-                <option value="id-asc">Student ID (ET100000...)</option>
-              </select>
-            </div>
-
-            <div class="filter-group ml-auto">
-              <span class="results-counter" id="students-results-counter">Showing 10,000 students</span>
-            </div>
-          </div>
-
-          <!-- Students Table Container -->
-          <div class="table-container glass-card">
-            <table class="data-table" id="students-data-table">
-              <thead>
-                <tr>
-                  <th>Student ID</th>
-                  <th>Name & Profile</th>
-                  <th>Department</th>
-                  <th>Year / Sem</th>
-                  <th>Course Enrolled</th>
-                  <th>Attendance</th>
-                  <th>Assessment Scores</th>
-                  <th>CGPA & Grade</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="students-table-body">
-                <!-- Dynamically populated rows -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Pagination Bar -->
-          <div class="pagination-bar" id="students-pagination">
-            <button class="btn btn-sm btn-outline" id="prev-page-btn" disabled>&larr; Previous</button>
-            <span class="page-info" id="page-info-text">Page 1 of 200</span>
-            <button class="btn btn-sm btn-outline" id="next-page-btn">Next &rarr;</button>
-          </div>
-        </section>
-
-        <!-- ======================================================== -->
-        <!-- TAB 3: COURSE CATALOG (12 COURSES) -->
-        <!-- ======================================================== -->
-        <section class="tab-pane" id="pane-courses">
-          <div class="filter-toolbar">
-            <div class="filter-group">
-              <label for="course-search-input" class="filter-label">Find Course:</label>
-              <input type="text" id="course-search-input" class="custom-input" placeholder="Search by name, code (CS101, Algorithms, DBMS)...">
-            </div>
-            <div class="filter-group ml-auto">
-              <span class="results-counter" id="course-results-counter">Showing 12 Core Courses</span>
-            </div>
-          </div>
-
-          <div class="courses-catalog-grid" id="courses-grid">
-            <!-- Dynamically populated courses -->
-          </div>
-        </section>
-
-        <!-- ======================================================== -->
-        <!-- TAB 4: FACULTY DIRECTORY (10 PROFESSORS) -->
-        <!-- ======================================================== -->
-        <section class="tab-pane" id="pane-faculty">
-          <div class="filter-toolbar">
-            <div class="filter-group">
-              <label for="faculty-search-input" class="filter-label">Search Faculty:</label>
-              <input type="text" id="faculty-search-input" class="custom-input" placeholder="Search professor name (Dr. Sharma, Dr. Rao, etc.)...">
-            </div>
-            <div class="filter-group ml-auto">
-              <span class="results-counter" id="faculty-results-counter">Showing 10 Faculty Members</span>
-            </div>
-          </div>
-
-          <div class="entity-cards-grid" id="faculty-grid">
-            <!-- Dynamically populated faculty -->
-          </div>
-        </section>
-
-        <!-- ======================================================== -->
-        <!-- TAB 5: EXAMS & SCHEDULES -->
-        <!-- ======================================================== -->
-        <section class="tab-pane" id="pane-schedules">
-          <div class="filter-toolbar">
-            <div class="filter-group">
-              <span class="filter-label">Master Exam Schedules & Conflict Groups from EduTrack.csv</span>
-            </div>
-            <div class="filter-group ml-auto">
-              <span class="results-counter">Room Allocation: Blocks A, B, C, D</span>
-            </div>
-          </div>
-
-          <div class="table-container glass-card">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Exam ID</th>
-                  <th>Course Code</th>
-                  <th>Course Name</th>
-                  <th>Date & Day</th>
-                  <th>Time Slot</th>
-                  <th>Exam Room</th>
-                  <th>Faculty In-Charge</th>
-                  <th>Conflict Group</th>
-                </tr>
-              </thead>
-              <tbody id="schedules-table-body">
-                <!-- Dynamically populated schedules -->
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- ======================================================== -->
-        <!-- TAB 6: DSA LIVE ALGORITHMIC SUITE (CO1, CO2, CO3) -->
-        <!-- ======================================================== -->
-        <section class="tab-pane" id="pane-algorithms">
-          <!-- DSA Sub-Nav Bar -->
-          <div class="dsa-subnav">
-            <button class="dsa-nav-tab active" data-dsatab="string-algo">Module 2: String Algorithms (CO1)</button>
-            <button class="dsa-nav-tab" data-dsatab="suffix-algo">Module 2: Suffix Structures (CO2)</button>
-            <button class="dsa-nav-tab" data-dsatab="dp-algo">Module 3: Advanced Dynamic Programming (CO3)</button>
-            <button class="dsa-nav-tab" data-dsatab="benchmark-algo">Performance Benchmark Suite</button>
-          </div>
-
-          <!-- DSA SUB-PANE 1: STRING ALGORITHMS -->
-          <div class="dsa-subpane active" id="dsapane-string-algo">
-            <!-- KMP Card -->
-            <div class="card glass-card mb-6">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">1. Knuth-Morris-Pratt (KMP) Linear String Matching</h2>
-                  <p class="card-subtitle">Preprocessing the pattern into failure table &pi; in O(m) and searching text in O(n) without backtracking</p>
-                </div>
-                <span class="badge badge-accent">CO1: O(n + m)</span>
-              </div>
-              <div class="card-body">
-                <div class="dsa-input-row">
-                  <div class="input-col flex-1">
-                    <label class="input-label" for="kmp-query-input">Pattern to Search Across EduTrack Assignment Texts & Courses:</label>
-                    <input type="text" id="kmp-query-input" class="custom-input" value="algorithm">
-                  </div>
-                  <div class="input-col">
-                    <button class="btn btn-primary mt-auto" onclick="runKmpSearch()">Run KMP Scan</button>
-                  </div>
-                </div>
-                <div class="preset-pills mt-2">
-                  <span class="preset-label">Presets:</span>
-                  <button class="pill-btn" onclick="setKmpPreset('algorithm')">"algorithm"</button>
-                  <button class="pill-btn" onclick="setKmpPreset('database normalization')">"database normalization"</button>
-                  <button class="pill-btn" onclick="setKmpPreset('machine learning')">"machine learning"</button>
-                  <button class="pill-btn" onclick="setKmpPreset('breadth first search')">"breadth first search"</button>
-                </div>
-                <!-- KMP Interactive Failure Table Display -->
-                <div class="algo-visual-box" id="kmp-visual-box"></div>
-                <div class="algo-results-box" id="kmp-results-box"></div>
-              </div>
-            </div>
-
-            <!-- Z-Algorithm Card -->
-            <div class="card glass-card mb-6">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">2. Z-Algorithm Linear Prefix Box Matching</h2>
-                  <p class="card-subtitle">Computes Z-array in O(n) using maintaining window [L, R] for exact substring matching</p>
-                </div>
-                <span class="badge badge-accent">CO1: O(n) Z-Box</span>
-              </div>
-              <div class="card-body">
-                <div class="dsa-input-row">
-                  <div class="input-col flex-1">
-                    <label class="input-label" for="z-query-input">Pattern to Detect in Assignment Submissions:</label>
-                    <input type="text" id="z-query-input" class="custom-input" value="string matching">
-                  </div>
-                  <div class="input-col">
-                    <button class="btn btn-primary mt-auto" onclick="runZSearch()">Run Z-Algorithm</button>
-                  </div>
-                </div>
-                <div class="algo-visual-box" id="z-visual-box"></div>
-                <div class="algo-results-box" id="z-results-box"></div>
-              </div>
-            </div>
-
-            <!-- Rabin-Karp & Aho-Corasick Grid -->
-            <div class="dashboard-grid">
-              <div class="card glass-card">
-                <div class="card-header">
-                  <div>
-                    <h2 class="card-title">3. Rabin-Karp Rolling Hash</h2>
-                    <p class="card-subtitle">Polynomial rolling hash with O(1) sliding window updates</p>
-                  </div>
-                  <span class="badge badge-cyan">Hash Sliding Window</span>
-                </div>
-                <div class="card-body">
-                  <div class="dsa-input-row">
-                    <input type="text" id="rk-query-input" class="custom-input flex-1" value="CS10">
-                    <button class="btn btn-secondary" onclick="runRkSearch()">Scan Code</button>
-                  </div>
-                  <div class="algo-results-box mt-3" id="rk-results-box"></div>
-                </div>
-              </div>
-
-              <div class="card glass-card">
-                <div class="card-header">
-                  <div>
-                    <h2 class="card-title">4. Aho-Corasick Multi-Pattern Trie</h2>
-                    <p class="card-subtitle">Finite state automaton scanning all keywords simultaneously</p>
-                  </div>
-                  <span class="badge badge-purple">Trie + Failure Links</span>
-                </div>
-                <div class="card-body">
-                  <div class="dsa-input-row">
-                    <input type="text" id="ac-query-input" class="custom-input flex-1" value="algorithm, network, database, scheduling">
-                    <button class="btn btn-secondary" onclick="runAcSearch()">Multi-Scan</button>
-                  </div>
-                  <div class="algo-results-box mt-3" id="ac-results-box"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- DSA SUB-PANE 2: SUFFIX STRUCTURES -->
-          <div class="dsa-subpane" id="dsapane-suffix-algo">
-            <div class="card glass-card mb-6">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">Suffix Array, SA-IS & Kasai LCP Array</h2>
-                  <p class="card-subtitle">Lexicographically sorted suffix table and linear-time Longest Common Prefix analysis (Module 2 - CO2)</p>
-                </div>
-                <span class="badge badge-accent">CO2: Suffix Structures</span>
-              </div>
-              <div class="card-body">
-                <div class="dsa-input-row">
-                  <div class="input-col flex-1">
-                    <label class="input-label" for="suffix-text-input">Academic Corpus Text to Index:</label>
-                    <input type="text" id="suffix-text-input" class="custom-input" value="compare database normalization techniques and algorithm scheduling">
-                  </div>
-                  <div class="input-col">
-                    <button class="btn btn-primary mt-auto" onclick="runSuffixArrayBuild()">Construct Structures</button>
-                  </div>
-                </div>
-                <div class="algo-visual-box mt-4" id="suffix-visual-box"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- DSA SUB-PANE 3: ADVANCED DYNAMIC PROGRAMMING -->
-          <div class="dsa-subpane" id="dsapane-dp-algo">
-            <!-- Levenshtein & Damerau Card -->
-            <div class="card glass-card mb-6">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">1. Levenshtein & Damerau-Levenshtein 2D DP Matrix Visualizer</h2>
-                  <p class="card-subtitle">Interactive 2D edit distance matrix with color-coded operations and typo tolerance (CO3)</p>
-                </div>
-                <span class="badge badge-accent">CO3: 2D DP Matrix</span>
-              </div>
-              <div class="card-body">
-                <div class="dsa-input-row">
-                  <div class="input-col flex-1">
-                    <label class="input-label" for="dp-str1">Source String (Query / Typos):</label>
-                    <input type="text" id="dp-str1" class="custom-input" value="rahul patel">
-                  </div>
-                  <div class="input-col flex-1">
-                    <label class="input-label" for="dp-str2">Target String (Catalog Record):</label>
-                    <input type="text" id="dp-str2" class="custom-input" value="rahul verma">
-                  </div>
-                  <div class="input-col">
-                    <button class="btn btn-primary mt-auto" onclick="runLevenshteinVisualizer()">Compute Matrix</button>
-                  </div>
-                </div>
-                <div class="preset-pills mt-2">
-                  <button class="pill-btn" onclick="setDpStrings('algoritm', 'algorithm')">"algoritm" &rarr; "algorithm"</button>
-                  <button class="pill-btn" onclick="setDpStrings('datastructure', 'datastructures')">"datastructure" &rarr; "datastructures"</button>
-                  <button class="pill-btn" onclick="setDpStrings('rohan gupta', 'rahul gupta')">"rohan gupta" &rarr; "rahul gupta"</button>
-                </div>
-                <div class="matrix-wrapper mt-4" id="levenshtein-matrix-box"></div>
-              </div>
-            </div>
-
-            <!-- Sequence Alignment (Needleman-Wunsch & Smith-Waterman) -->
-            <div class="dashboard-grid mb-6">
-              <div class="card glass-card">
-                <div class="card-header">
-                  <div>
-                    <h2 class="card-title">2. Needleman-Wunsch Alignment</h2>
-                    <p class="card-subtitle">Global optimal sequence alignment with gaps</p>
-                  </div>
-                  <span class="badge badge-cyan">Global DP</span>
-                </div>
-                <div class="card-body">
-                  <div class="dsa-input-row">
-                    <input type="text" id="nw-s1" class="custom-input flex-1" value="ALGORITHM">
-                    <input type="text" id="nw-s2" class="custom-input flex-1" value="ALLIGATOR">
-                    <button class="btn btn-secondary" onclick="runNeedlemanWunsch()">Align</button>
-                  </div>
-                  <div class="algo-results-box mt-3" id="nw-results-box"></div>
-                </div>
-              </div>
-
-              <div class="card glass-card">
-                <div class="card-header">
-                  <div>
-                    <h2 class="card-title">3. Smith-Waterman Alignment</h2>
-                    <p class="card-subtitle">Local substring maximal score alignment</p>
-                  </div>
-                  <span class="badge badge-purple">Local DP</span>
-                </div>
-                <div class="card-body">
-                  <div class="dsa-input-row">
-                    <input type="text" id="sw-s1" class="custom-input flex-1" value="DATASTRUCTURES">
-                    <input type="text" id="sw-s2" class="custom-input flex-1" value="ASTRUCTURE">
-                    <button class="btn btn-secondary" onclick="runSmithWaterman()">Find Local</button>
-                  </div>
-                  <div class="algo-results-box mt-3" id="sw-results-box"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Interval DP & Tree/Bitmask DP Grid -->
-            <div class="dashboard-grid">
-              <div class="card glass-card">
-                <div class="card-header">
-                  <div>
-                    <h2 class="card-title">4. Matrix Chain Multiplication</h2>
-                    <p class="card-subtitle">Optimal parenthesization for database join order</p>
-                  </div>
-                  <span class="badge badge-emerald">Interval DP</span>
-                </div>
-                <div class="card-body">
-                  <p class="text-sm text-muted mb-2">Matrix dimensions: A1(50x10), A2(10x20), A3(20x5), A4(5x100)</p>
-                  <button class="btn btn-secondary w-full" onclick="runMcmOptimization()">Optimize Multiplication Sequence</button>
-                  <div class="algo-results-box mt-3" id="mcm-results-box"></div>
-                </div>
-              </div>
-
-              <div class="card glass-card">
-                <div class="card-header">
-                  <div>
-                    <h2 class="card-title">5. Optimal BST & Bitmask Scheduling</h2>
-                    <p class="card-subtitle">Minimum expected cost tree & conflict group optimization</p>
-                  </div>
-                  <span class="badge badge-amber">Combinatorial DP</span>
-                </div>
-                <div class="card-body">
-                  <p class="text-sm text-muted mb-2">Campus lab tour TSP & course frequency lookup optimization</p>
-                  <button class="btn btn-secondary w-full" onclick="runObstAndBitmask()">Run OBST & Bitmask Tour</button>
-                  <div class="algo-results-box mt-3" id="obst-results-box"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- DSA SUB-PANE 4: BENCHMARK SUITE -->
-          <div class="dsa-subpane" id="dsapane-benchmark-algo">
-            <div class="card glass-card">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">Live Algorithmic Benchmark & Speed Comparison</h2>
-                  <p class="card-subtitle">Execute DSA algorithms simultaneously over the 10,000 EduTrack.csv texts and measure real CPU microseconds</p>
-                </div>
-                <button class="btn btn-primary" onclick="runFullBenchmark()">Run Live Benchmark</button>
-              </div>
-              <div class="card-body">
-                <div class="benchmark-grid" id="benchmark-results-container">
-                  <div class="benchmark-placeholder">Click 'Run Live Benchmark' to measure runtime execution across all algorithms.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ======================================================== -->
-        <!-- TAB 7: UNIVERSITY ADMINISTRATION -->
-        <!-- ======================================================== -->
-        <section class="tab-pane" id="pane-admin">
-          <div class="card glass-card">
-            <div class="card-header">
+        <!-- PANE: STUDENT DASHBOARD -->
+        <div class="tab-pane active" id="pane-student-dashboard">
+          <div class="hero-banner">
+            <div class="hero-left">
+              <div class="hero-avatar-large" id="stu-hero-avatar">AD</div>
               <div>
-                <h2 class="card-title">Institutional Leadership & Administration</h2>
-                <p class="card-subtitle">Executive officers, Controller of Examinations, and Office of the Registrar</p>
+                <h2 class="hero-title" id="stu-hero-name">Welcome back, Aarav Das!</h2>
+                <p class="hero-subtitle" id="stu-hero-sub">Student ID: <strong id="stu-hero-id">ET100072</strong> &bull; Department of <span id="stu-hero-dept">Computer Science & Engineering</span></p>
+                <div class="hero-meta-badges">
+                  <span class="hero-badge" id="stu-hero-year">Year 4 &bull; Semester 7</span>
+                  <span class="hero-badge" id="stu-hero-section">Section: A-1</span>
+                  <span class="role-badge role-badge-student">Active Student</span>
+                </div>
               </div>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="switchTab('student-exams')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                View Exam Hall Ticket
+              </button>
+            </div>
+          </div>
+
+          <!-- Academic KPI Cards -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">Cumulative GPA</span>
+                <span class="kpi-card-icon">🎯</span>
+              </div>
+              <div class="kpi-card-value text-cyan" id="stu-kpi-cgpa">8.03</div>
+              <div class="kpi-card-sub" id="stu-kpi-standing">Top 12% in Department &bull; Scale: 10.0</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">Attendance Record</span>
+                <span class="kpi-card-icon">📅</span>
+              </div>
+              <div class="kpi-card-value text-emerald" id="stu-kpi-attendance">87.2%</div>
+              <div class="kpi-card-sub text-emerald">Eligible for all examinations (&gt;75%)</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">Latest Exam Score</span>
+                <span class="kpi-card-icon">📊</span>
+              </div>
+              <div class="kpi-card-value text-indigo" id="stu-kpi-exam">85.1</div>
+              <div class="kpi-card-sub">Letter Grade: <strong id="stu-kpi-grade">A</strong> &bull; Midterm: 86.1</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">Academic Standing</span>
+                <span class="kpi-card-icon">🏆</span>
+              </div>
+              <div class="kpi-card-value text-amber" id="stu-kpi-status">Pass</div>
+              <div class="kpi-card-sub">Degree Progress: 114 / 140 Credits Earned</div>
+            </div>
+          </div>
+
+          <!-- Upcoming Exam Alert Card with Live Countdown -->
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Next Scheduled Examination</h3>
+                <span class="badge badge-indigo">Official Hall Ticket Issued</span>
+              </div>
+              <div class="card-body">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.25);border-radius:10px;padding:16px;">
+                  <div>
+                    <div style="font-size:1.15rem;font-weight:700;color:#fff;" id="stu-next-exam-title">CS101 &bull; Design & Analysis of Algorithms</div>
+                    <div style="font-size:0.84rem;color:var(--text-muted);margin-top:4px;" id="stu-next-exam-meta">Date: Friday, 2026-11-11 &bull; Time: 10:00 AM &bull; Room: Hall B-408</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:0.75rem;text-transform:uppercase;color:var(--text-dim);font-weight:700;">Countdown to Exam</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--cyan-400);" id="stu-exam-countdown">26d 14h 22m</div>
+                  </div>
+                </div>
+                <div style="margin-top:16px;display:flex;gap:10px;">
+                  <button class="btn btn-sm btn-primary" onclick="openHallTicketModal()">Download Printable Hall Ticket</button>
+                  <button class="btn btn-sm btn-secondary" onclick="switchTab('student-courses')">Review Study Notes</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Academic Progress & Enrolled Courses Summary -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">My Registered Courses</h3>
+                <button class="btn btn-xs btn-outline" onclick="switchTab('student-courses')">View All</button>
+              </div>
+              <div class="card-body" id="stu-registered-courses-list">
+                <!-- Injected via app.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: STUDENT COURSES & MATERIALS -->
+        <div class="tab-pane" id="pane-student-courses">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">My Enrolled Courses & Study Materials</h2>
+              <p class="section-subtitle">Syllabus, lecture notes, textbook references, and lab manuals</p>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-outline" onclick="switchTab('student-search')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Search Notes with DSA
+              </button>
+            </div>
+          </div>
+
+          <div class="courses-grid" id="stu-courses-grid">
+            <!-- Dynamic course cards injected via app.js -->
+          </div>
+
+          <div class="section-title" style="margin-top:32px;">Learning Resources & Lecture Notes Library</div>
+          <p class="section-subtitle">Download syllabus slides, lab manuals, and previous question papers</p>
+          <div class="materials-grid" id="stu-materials-grid">
+            <!-- Materials cards injected via app.js -->
+          </div>
+        </div>
+
+        <!-- PANE: STUDENT ASSIGNMENTS -->
+        <div class="tab-pane" id="pane-student-assignments">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">My Assignments & Submissions</h2>
+              <p class="section-subtitle">Track project deadlines, upload solutions, and inspect grading feedback</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="openSubmitAssignmentModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Submit New Assignment
+              </button>
+            </div>
+          </div>
+
+          <div id="stu-assignments-container">
+            <!-- Rendered via app.js -->
+          </div>
+        </div>
+
+        <!-- PANE: STUDENT EXAMS & HALL TICKET -->
+        <div class="tab-pane" id="pane-student-exams">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">University Examination Schedule & Hall Ticket</h2>
+              <p class="section-subtitle">End-semester examination allotment, venue details, and candidate hall ticket</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="openHallTicketModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Open Official Hall Ticket (Printable)
+              </button>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="card-title">My Examination Schedule Matrix</h3>
+              <span class="badge badge-emerald">Seating Allocated</span>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Exam ID</th>
+                    <th>Course Code</th>
+                    <th>Course Name</th>
+                    <th>Exam Date</th>
+                    <th>Day & Time</th>
+                    <th>Hall / Room</th>
+                    <th>Seat Number</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="stu-exams-tbody">
+                  <!-- Injected via app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: STUDENT FAST ACADEMIC SEARCH (DSA POWERED) -->
+        <div class="tab-pane" id="pane-student-search">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Fast Academic Information Retrieval (DSA String Matching)</h2>
+              <p class="section-subtitle">Instant multi-document search across courses, notes, and research using KMP & Boyer-Moore algorithms</p>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <input type="text" id="stu-search-keyword" class="form-input" style="flex:1;min-width:260px;" placeholder="Search topic e.g. 'normalization', 'routing', 'matching', 'sensor'..." value="normalization">
+                <button class="btn btn-primary" onclick="runStudentDsaSearch()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  Run KMP Search
+                </button>
+              </div>
+
+              <div class="filter-pills mt-3" style="display:flex;gap:8px;flex-wrap:wrap;">
+                <span class="preset-label">Quick Presets:</span>
+                <button class="pill-btn" onclick="setStuSearchPreset('normalization')">"normalization"</button>
+                <button class="pill-btn" onclick="setStuSearchPreset('algorithm')">"algorithm"</button>
+                <button class="pill-btn" onclick="setStuSearchPreset('scheduling')">"scheduling"</button>
+                <button class="pill-btn" onclick="setStuSearchPreset('database')">"database"</button>
+                <button class="pill-btn" onclick="setStuSearchPreset('machine learning')">"machine learning"</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="stu-search-results-box" class="card">
+            <!-- Search output & KMP failure array rendered here -->
+          </div>
+        </div>
+
+        <!-- PANE: STUDENT ANALYTICS -->
+        <div class="tab-pane" id="pane-student-analytics">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Personal Academic Analytics & Audit</h2>
+              <p class="section-subtitle">Performance breakdown, CGPA comparison, and activity audit</p>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Performance vs Department Average</h3>
+              </div>
+              <div class="card-body" id="stu-analytics-dept-compare">
+                <!-- Rendered via app.js -->
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Attendance Health & Exam Readiness</h3>
+              </div>
+              <div class="card-body" id="stu-analytics-attendance-chart">
+                <!-- Rendered via app.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: STUDENT OFFICIAL TRANSCRIPT & LATIN HONORS (NEW CLASSIC FEATURE) -->
+        <div class="tab-pane" id="pane-student-transcript">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Official Academic Transcript & Latin Honors</h2>
+              <p class="section-subtitle">Certified university parchment record with seal verification, Latin honors distinction, and course grade breakdown</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-outline" onclick="openTranscriptModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Inspect Parchment Certificate
+              </button>
+              <button class="btn btn-primary" onclick="printOfficialTranscript()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Print / Export Official Transcript
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Embedded Parchment Preview Card -->
+          <div class="card mb-4" style="background:transparent;border:none;padding:0;">
+            <div id="stu-transcript-preview-container">
+              <!-- Dynamically populated by renderOfficialTranscript() in app.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: ARCHIVAL RARE BOOKS & RESEARCH REPOSITORY (NEW CLASSIC FEATURE) -->
+        <div class="tab-pane" id="pane-student-library">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Archival Rare Books & Research Treatises</h2>
+              <p class="section-subtitle">The University Classical Repository of Foundational Treatises, Computational Manuscripts & Algorithmic Literature</p>
+            </div>
+            <div class="rare-book-search-bar" style="max-width:320px;">
+              <input type="text" id="rare-book-filter-input" class="form-input" placeholder="Search treatise title, author, Latin..." oninput="filterRareBooks(this.value)">
+            </div>
+          </div>
+
+          <!-- Category filter buttons -->
+          <div class="pill-group mb-3">
+            <button class="pill-btn active" onclick="setRareBookCategory('ALL', this)">All Rare Volumes</button>
+            <button class="pill-btn" onclick="setRareBookCategory('MATH', this)">Mathematical Foundations</button>
+            <button class="pill-btn" onclick="setRareBookCategory('ALGO', this)">Algorithmic Treatises</button>
+            <button class="pill-btn" onclick="setRareBookCategory('AUTO', this)">Automata & Computation</button>
+            <button class="pill-btn" onclick="setRareBookCategory('PHIL', this)">Natural Philosophy</button>
+          </div>
+
+          <div class="rare-books-grid" id="rare-books-grid">
+            <!-- Dynamic rare book cards injected via app.js -->
+          </div>
+        </div>
+
+        <!-- PANE: OXFORD TUTORIAL & MENTORSHIP LEDGER (NEW CLASSIC FEATURE) -->
+        <div class="tab-pane" id="pane-student-consultation">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Master's Tutorial & Faculty Consultation Desk</h2>
+              <p class="section-subtitle">Traditional collegiate tutorial meetings, thesis consultation, and algorithmic defense scheduling with Senior Fellows</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="openConsultationBookingModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Schedule New Tutorial
+              </button>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">My Scheduled Tutorial Ledger</h3>
+                <span class="badge badge-indigo">Collegiate System</span>
+              </div>
+              <div class="card-body" id="stu-consultations-list">
+                <!-- Rendered via app.js -->
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Senior Fellows Office Hours & Quadrangle Directory</h3>
+                <span class="badge badge-emerald">Available This Week</span>
+              </div>
+              <div class="card-body" id="stu-fellows-directory">
+                <!-- Rendered via app.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ================================================================= -->
+        <!-- 2. TEACHER / FACULTY ROLE PANES                                   -->
+        <!-- ================================================================= -->
+
+        <!-- PANE: FACULTY DASHBOARD -->
+        <div class="tab-pane" id="pane-faculty-dashboard">
+          <div class="hero-banner">
+            <div class="hero-left">
+              <div class="hero-avatar-large" style="background:linear-gradient(135deg, var(--purple-500), var(--indigo-500));">👨‍🏫</div>
+              <div>
+                <h2 class="hero-title" id="fac-hero-name">Welcome, Dr. Rajesh Sharma!</h2>
+                <p class="hero-subtitle">Faculty ID: <strong id="fac-hero-id">F101</strong> &bull; Department of <span id="fac-hero-dept">Computer Science & Engineering</span></p>
+                <div class="hero-meta-badges">
+                  <span class="hero-badge">Specialization: Algorithms & Optimization</span>
+                  <span class="hero-badge">Designation: Professor & Program Head</span>
+                  <span class="role-badge role-badge-teacher">Faculty Member</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="openUploadMaterialModal()">Upload Study Note</button>
+              <button class="btn btn-secondary" onclick="openCreateAssignmentModal()">Create Assignment</button>
+            </div>
+          </div>
+
+          <!-- Faculty KPI Cards -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">Assigned Courses</span>
+                <span class="kpi-card-icon">📚</span>
+              </div>
+              <div class="kpi-card-value text-purple" id="fac-kpi-courses">3 Courses</div>
+              <div class="kpi-card-sub">Algorithms &bull; Computer Architecture &bull; DBMS</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">Enrolled Students</span>
+                <span class="kpi-card-icon">👥</span>
+              </div>
+              <div class="kpi-card-value text-cyan" id="fac-kpi-students">840</div>
+              <div class="kpi-card-sub">Across 3 active class sections</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">Class Avg Attendance</span>
+                <span class="kpi-card-icon">📈</span>
+              </div>
+              <div class="kpi-card-value text-emerald" id="fac-kpi-att">82.4%</div>
+              <div class="kpi-card-sub text-emerald">Healthy class engagement</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">Submissions Pending</span>
+                <span class="kpi-card-icon">📝</span>
+              </div>
+              <div class="kpi-card-value text-amber" id="fac-kpi-pending">14</div>
+              <div class="kpi-card-sub"><a href="#" onclick="switchTab('faculty-gradebook')" style="color:var(--amber-400);">Open Gradebook &rarr;</a></div>
+            </div>
+          </div>
+
+          <!-- At-Risk Student Alert Banner -->
+          <div class="at-risk-banner" id="fac-at-risk-banner">
+            <div class="at-risk-text">
+              <h4>⚠️ Academic Early Warning: 18 Students Identified At-Risk</h4>
+              <p>Students currently have attendance &lt; 75% or CGPA &lt; 6.0 in your courses. Automated DSA filter flagged for immediate mentorship intervention.</p>
+            </div>
+            <button class="btn btn-sm btn-outline" style="border-color:var(--rose-400);color:var(--rose-400);" onclick="openAtRiskModal()">View At-Risk Roster</button>
+          </div>
+
+          <!-- Quick Actions & Courses -->
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">My Active Courses</h3>
+                <button class="btn btn-xs btn-outline" onclick="switchTab('faculty-courses')">Manage All</button>
+              </div>
+              <div class="card-body" id="fac-active-courses-list">
+                <!-- Injected via app.js -->
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Recent Submissions Waiting for Evaluation</h3>
+                <button class="btn btn-xs btn-outline" onclick="switchTab('faculty-gradebook')">Grade All</button>
+              </div>
+              <div class="card-body" id="fac-recent-submissions-list">
+                <!-- Injected via app.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: FACULTY ASSIGNED COURSES & ROSTER -->
+        <div class="tab-pane" id="pane-faculty-courses">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Assigned Courses & Class Rosters</h2>
+              <p class="section-subtitle">View enrolled students, attendance distribution, and grade statistics</p>
+            </div>
+          </div>
+
+          <div class="courses-grid" id="fac-courses-grid">
+            <!-- Rendered via app.js -->
+          </div>
+
+          <div class="card mt-4" id="fac-roster-card" style="display:none;">
+            <div class="card-header">
+              <h3 class="card-title" id="fac-roster-title">Class Roster</h3>
+              <button class="btn btn-xs btn-outline" onclick="document.getElementById('fac-roster-card').style.display='none'">Close</button>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Year</th>
+                    <th>CGPA</th>
+                    <th>Attendance</th>
+                    <th>Exam Score</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="fac-roster-tbody">
+                  <!-- Injected via app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: FACULTY UPLOAD MATERIALS -->
+        <div class="tab-pane" id="pane-faculty-materials">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Upload Course Notes & Study Materials</h2>
+              <p class="section-subtitle">Publish syllabus slides, reference books, lab manuals, and question banks</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="openUploadMaterialModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload New Note
+              </button>
+            </div>
+          </div>
+
+          <div class="materials-grid" id="fac-materials-grid">
+            <!-- Rendered via app.js -->
+          </div>
+        </div>
+
+        <!-- PANE: FACULTY CREATE ASSIGNMENTS -->
+        <div class="tab-pane" id="pane-faculty-assignments">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Create Assignments & Internal Assessments</h2>
+              <p class="section-subtitle">Design coursework tasks, assign submission deadlines, and specify evaluation rubrics</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="openCreateAssignmentModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Create Assignment
+              </button>
+            </div>
+          </div>
+
+          <div id="fac-assignments-grid">
+            <!-- Rendered via app.js -->
+          </div>
+        </div>
+
+        <!-- PANE: FACULTY GRADEBOOK -->
+        <div class="tab-pane" id="pane-faculty-gradebook">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Faculty Gradebook & Attendance Desk</h2>
+              <p class="section-subtitle">Evaluate submitted assignments, update exam marks, and monitor at-risk alerts</p>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-outline" onclick="openAtRiskModal()">
+                ⚠️ View At-Risk Students
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Student Submissions Awaiting Evaluation</h3>
+              <span class="badge badge-amber" id="fac-gradebook-count">14 Pending</span>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Course</th>
+                    <th>Assignment Title</th>
+                    <th>Submitted On</th>
+                    <th>Current Grade</th>
+                    <th>Attendance</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="fac-gradebook-tbody">
+                  <!-- Rendered via app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: FACULTY ANALYTICS & DSA BIPARTITE MATCHING -->
+        <div class="tab-pane" id="pane-faculty-analytics">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Faculty Analytics & DSA Bipartite Matching Assistant</h2>
+              <p class="section-subtitle">Class grade distribution and Hopcroft-Karp / Edmonds-Karp TA & Lab Allocation</p>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Class Grade Distribution Spectrum</h3>
+              </div>
+              <div class="card-body" id="fac-grade-distribution-chart">
+                <!-- Rendered via app.js -->
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">DSA Bipartite Matching: Lab & TA Allocation</h3>
+                <span class="badge badge-cyan">Hopcroft-Karp O(&radic;V &bull; E)</span>
+              </div>
+              <div class="card-body">
+                <p class="text-sm text-muted">Optimal assignment of 5 Graduate Teaching Assistants to 5 Lab Sessions without time conflicts.</p>
+                <div style="margin:16px 0;" id="fac-bipartite-results">
+                  <div class="witness-round-chip"><span>TA 1 (Aarav D.) &rarr; Lab 101 (Algorithms Mon 10:00)</span><span class="badge badge-emerald">MATCHED</span></div>
+                  <div class="witness-round-chip"><span>TA 2 (Pooja K.) &rarr; Lab 102 (DBMS Tue 14:00)</span><span class="badge badge-emerald">MATCHED</span></div>
+                  <div class="witness-round-chip"><span>TA 3 (Rohan G.) &rarr; Lab 103 (Networks Wed 10:00)</span><span class="badge badge-emerald">MATCHED</span></div>
+                  <div class="witness-round-chip"><span>TA 4 (Kiran G.) &rarr; Lab 104 (OS Thu 14:00)</span><span class="badge badge-emerald">MATCHED</span></div>
+                  <div class="witness-round-chip"><span>TA 5 (Meera N.) &rarr; Lab 105 (Web Dev Fri 10:00)</span><span class="badge badge-emerald">MATCHED</span></div>
+                </div>
+                <button class="btn btn-sm btn-primary" onclick="showToast('Re-computed maximum cardinality bipartite matching via Hopcroft-Karp in 42 µs: 5/5 matched', 'success')">Re-Optimize Allocations</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: FACULTY TUTORIAL & OFFICE HOURS DESK (NEW CLASSIC FEATURE) -->
+        <div class="tab-pane" id="pane-faculty-consultation">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Collegiate Tutorial & Fellow's Consultation Desk</h2>
+              <p class="section-subtitle">Review scheduled student tutorial defenses, assign preparation notes, and confirm office hour consultations</p>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-outline" onclick="showToast('Office hours broadcasted: Mon, Wed, Fri 14:00 - 17:00 at Wren Quadrangle Room 302', 'info')">
+                Broadcast Office Hours
+              </button>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="card-title">Booked Collegiate Tutorial Appointments</h3>
+              <span class="badge badge-indigo" id="fac-tutorial-count-badge">3 Pending Reviews</span>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Appointment ID</th>
+                    <th>Student Scholar</th>
+                    <th>Subject / Thesis Topic</th>
+                    <th>Date & Time</th>
+                    <th>Hall / Room</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="fac-tutorials-tbody">
+                  <!-- Rendered via app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ================================================================= -->
+        <!-- 3. ADMIN ROLE PANES                                               -->
+        <!-- ================================================================= -->
+
+        <!-- PANE: ADMIN DASHBOARD (EXECUTIVE OVERVIEW) -->
+        <div class="tab-pane" id="pane-admin-dashboard">
+          <div class="hero-banner">
+            <div class="hero-left">
+              <div class="hero-avatar-large" style="background:linear-gradient(135deg, var(--amber-500), var(--rose-500));">🛡️</div>
+              <div>
+                <h2 class="hero-title">University Executive Command Center</h2>
+                <p class="hero-subtitle">EduTrack University Academic Intelligence & Central Administration Portal</p>
+                <div class="hero-meta-badges">
+                  <span class="hero-badge">10,000 Enrolled Students</span>
+                  <span class="hero-badge">12 Departments &bull; 10 Faculty</span>
+                  <span class="role-badge role-badge-admin">System Administrator</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-primary" onclick="openAddStudentModal()">+ Register Student</button>
+              <button class="btn btn-secondary" onclick="exportStudentsData('csv')">Export CSV</button>
+            </div>
+          </div>
+
+          <!-- University KPI Stats Grid -->
+          <div class="stats-grid">
+            <div class="stat-card" data-accent="indigo">
+              <div class="stat-header">
+                <span class="stat-label">Total Students</span>
+                <span class="stat-icon">🎓</span>
+              </div>
+              <div class="stat-value" id="admin-stat-students">10,000</div>
+              <div class="stat-footer"><span class="badge badge-indigo">100% Verified</span> Dataset records</div>
+            </div>
+
+            <div class="stat-card" data-accent="cyan">
+              <div class="stat-header">
+                <span class="stat-label">Active Courses</span>
+                <span class="stat-icon">📚</span>
+              </div>
+              <div class="stat-value" id="admin-stat-courses">12</div>
+              <div class="stat-footer">Across 8 Engineering Depts</div>
+            </div>
+
+            <div class="stat-card" data-accent="purple">
+              <div class="stat-header">
+                <span class="stat-label">University Faculty</span>
+                <span class="stat-icon">👨‍🏫</span>
+              </div>
+              <div class="stat-value" id="admin-stat-faculty">10</div>
+              <div class="stat-footer">Distinguished Professors</div>
+            </div>
+
+            <div class="stat-card" data-accent="emerald">
+              <div class="stat-header">
+                <span class="stat-label">Overall Pass Rate</span>
+                <span class="stat-icon">✅</span>
+              </div>
+              <div class="stat-value text-emerald" id="admin-stat-pass">79.9%</div>
+              <div class="stat-footer">7,990 Students Passing</div>
+            </div>
+
+            <div class="stat-card" data-accent="amber">
+              <div class="stat-header">
+                <span class="stat-label">University Avg CGPA</span>
+                <span class="stat-icon">⭐</span>
+              </div>
+              <div class="stat-value" id="admin-stat-cgpa">7.14</div>
+              <div class="stat-footer">Mean academic standing</div>
+            </div>
+
+            <div class="stat-card" data-accent="rose">
+              <div class="stat-header">
+                <span class="stat-label">Avg Attendance</span>
+                <span class="stat-icon">📊</span>
+              </div>
+              <div class="stat-value" id="admin-stat-att">79.8%</div>
+              <div class="stat-footer">University-wide attendance</div>
+            </div>
+          </div>
+
+          <!-- Department & Grade Distributions -->
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Department Enrollment Distribution</h3>
+                <span class="badge badge-cyan">8 Engineering Disciplines</span>
+              </div>
+              <div class="card-body">
+                <div class="chart-container" id="admin-dept-chart"></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">University Grade Spectrum</h3>
+                <span class="badge badge-purple">A+ to F</span>
+              </div>
+              <div class="card-body">
+                <div class="chart-container" id="admin-grade-chart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: ADMIN STUDENTS EXPLORER (FULL CRUD & SEARCH) -->
+        <div class="tab-pane" id="pane-admin-students">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">10,000 Student Records Directory</h2>
+              <p class="section-subtitle">Search, filter, edit, add, and export student records from EduTrack.csv</p>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-primary" onclick="openAddStudentModal()">+ Add New Student</button>
+              <button class="btn btn-outline" onclick="exportStudentsData('csv')">Export CSV</button>
+              <button class="btn btn-outline" onclick="exportStudentsData('json')">Export JSON</button>
+            </div>
+          </div>
+
+          <!-- Filters Bar -->
+          <div class="filter-card">
+            <div class="filter-grid">
+              <div class="filter-item">
+                <label class="filter-label">Department</label>
+                <select class="filter-select" id="filter-dept">
+                  <option value="ALL">All Departments</option>
+                  <option value="CSE">CSE (Computer Science)</option>
+                  <option value="ECE">ECE (Electronics & Comm)</option>
+                  <option value="ME">ME (Mechanical)</option>
+                  <option value="EEE">EEE (Electrical)</option>
+                  <option value="AIML">AIML (AI & Machine Learning)</option>
+                  <option value="AI&DS">AI&DS (Data Science)</option>
+                  <option value="IT">IT (Information Tech)</option>
+                  <option value="CE">CE (Civil)</option>
+                </select>
+              </div>
+
+              <div class="filter-item">
+                <label class="filter-label">Academic Year</label>
+                <select class="filter-select" id="filter-year">
+                  <option value="ALL">All Years</option>
+                  <option value="1">Year 1</option>
+                  <option value="2">Year 2</option>
+                  <option value="3">Year 3</option>
+                  <option value="4">Year 4</option>
+                </select>
+              </div>
+
+              <div class="filter-item">
+                <label class="filter-label">Letter Grade</label>
+                <select class="filter-select" id="filter-grade">
+                  <option value="ALL">All Grades</option>
+                  <option value="A+">Grade A+</option>
+                  <option value="A">Grade A</option>
+                  <option value="B">Grade B</option>
+                  <option value="C">Grade C</option>
+                  <option value="D">Grade D</option>
+                  <option value="F">Grade F</option>
+                </select>
+              </div>
+
+              <div class="filter-item">
+                <label class="filter-label">Academic Status</label>
+                <select class="filter-select" id="filter-status">
+                  <option value="ALL">All Status</option>
+                  <option value="Pass">Pass</option>
+                  <option value="Fail">Fail</option>
+                </select>
+              </div>
+
+              <div class="filter-item">
+                <label class="filter-label">Sort Records By</label>
+                <select class="filter-select" id="filter-sort">
+                  <option value="cgpa-desc">CGPA: High &rarr; Low</option>
+                  <option value="cgpa-asc">CGPA: Low &rarr; High</option>
+                  <option value="att-desc">Attendance: High &rarr; Low</option>
+                  <option value="exam-desc">Exam Score: High &rarr; Low</option>
+                  <option value="name-asc">Student Name (A &rarr; Z)</option>
+                  <option value="id-asc">Student ID (ET...)</option>
+                </select>
+              </div>
+
+              <div class="filter-item">
+                <label class="filter-label">Display Records</label>
+                <select class="filter-select" id="filter-limit">
+                  <option value="10000" selected>All Students (10,000 Records)</option>
+                  <option value="1000">1,000 per page</option>
+                  <option value="500">500 per page</option>
+                  <option value="250">250 per page</option>
+                  <option value="100">100 per page</option>
+                  <option value="50">50 per page</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Students Table -->
+          <div class="table-card">
+            <div class="table-meta">
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <span class="table-count" id="table-record-count">Showing all 10,000 records</span>
+                <button class="btn btn-xs btn-outline" id="btn-toggle-show-all" onclick="toggleShowAllStudents()">Show All (10,000)</button>
+              </div>
+              <div class="pagination-controls" id="table-pagination"></div>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Dept</th>
+                    <th>Course</th>
+                    <th>Year</th>
+                    <th>CGPA</th>
+                    <th>Attendance</th>
+                    <th>Exam Score</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="students-table-body">
+                  <!-- Injected via app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: ADMIN FACULTY & COURSE ALLOCATION -->
+        <div class="tab-pane" id="pane-admin-faculty">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Faculty Directory & Course Allocations</h2>
+              <p class="section-subtitle">University faculty governance, course assignments, and workload allocations</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="openAddFacultyModal()">+ Add Faculty Member</button>
+            </div>
+          </div>
+
+          <div class="faculty-grid" id="admin-faculty-grid">
+            <!-- Rendered via app.js -->
+          </div>
+        </div>
+
+        <!-- PANE: ADMIN EXAM SCHEDULER (DSA GRAPH COLORING) -->
+        <div class="tab-pane" id="pane-admin-exams">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Conflict-Free Examination Timetable Scheduler</h2>
+              <p class="section-subtitle">Automated graph vertex coloring (Welsh-Powell) guaranteeing zero exam clashes for any student</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="runGraphColoringScheduler()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                Re-Generate Conflict-Free Schedule
+              </button>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="card-title">Graph Coloring Timetable Engine</h3>
+              <span class="badge badge-emerald" id="admin-scheduler-status">Optimal 5 Slots &bull; Chromatic Number &chi;(G) = 5</span>
             </div>
             <div class="card-body">
-              <div class="admin-quick-grid" id="admin-cards-container">
-                <!-- Dynamically populated -->
+              <p class="text-sm text-muted">
+                Each course is a vertex in graph <em>G = (V, E)</em>. An edge exists between two courses if at least one student is enrolled in both.
+                The Welsh-Powell algorithm sorts vertices by degree in descending order and assigns colors (time slots) such that no adjacent vertices share a slot.
+              </p>
+              <div class="conflict-graph-preview" id="admin-scheduler-preview">
+                <!-- Injected via app.js -->
               </div>
             </div>
           </div>
-        </section>
+        </div>
+
+        <!-- PANE: ADMIN UNIVERSITY ANALYTICS & AUDIT LOGS -->
+        <div class="tab-pane" id="pane-admin-analytics">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">University Analytics & System Audit Trail</h2>
+              <p class="section-subtitle">Departmental performance metrics, pass rates, and security audit logs</p>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="card-title">Cross-Department Academic Performance Comparison</h3>
+              <span class="badge badge-indigo">8 Engineering Disciplines</span>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Department</th>
+                    <th>Students</th>
+                    <th>Avg CGPA</th>
+                    <th>Avg Attendance</th>
+                    <th>Avg Exam Score</th>
+                    <th>Pass Rate</th>
+                    <th>Performance Tier</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-analytics-tbody">
+                  <!-- Rendered via app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Real-Time System Audit Log</h3>
+              <button class="btn btn-xs btn-outline" onclick="renderAuditLogs()">Refresh Log</button>
+            </div>
+            <div class="card-body">
+              <div id="admin-audit-logs" style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;display:flex;flex-direction:column;gap:8px;">
+                <!-- Logs injected via app.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: ADMIN DEAN'S HONORS ROLL & SCHOLARS (NEW CLASSIC FEATURE) -->
+        <div class="tab-pane" id="pane-admin-honors">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">The Dean's Honors Roll & Royal Scholar Society</h2>
+              <p class="section-subtitle">Top university scholars ranked via high-speed heap/quicksort across 10,000 students with Latin honors distinction</p>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-primary" onclick="exportHonorsRollCsv()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export Honors Registry
+              </button>
+            </div>
+          </div>
+
+          <!-- Honors Summary KPI Cards -->
+          <div class="kpi-grid mb-4">
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">Summa Cum Laude Scholars</span>
+                <span class="kpi-card-icon">👑</span>
+              </div>
+              <div class="kpi-card-value text-amber" id="honors-summa-count">142</div>
+              <div class="kpi-card-sub">CGPA &ge; 9.50 &bull; Chancellor's Gold Medal</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">Magna Cum Laude</span>
+                <span class="kpi-card-icon">🎖️</span>
+              </div>
+              <div class="kpi-card-value text-indigo" id="honors-magna-count">876</div>
+              <div class="kpi-card-sub">CGPA 8.50 - 9.49 &bull; Dean's Citation</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">Cum Laude Fellowship</span>
+                <span class="kpi-card-icon">📜</span>
+              </div>
+              <div class="kpi-card-value text-emerald" id="honors-cumlaude-count">1,840</div>
+              <div class="kpi-card-sub">CGPA 7.50 - 8.49 &bull; Scholar Society</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-card-label">University Valedictorian</span>
+                <span class="kpi-card-icon">🏆</span>
+              </div>
+              <div class="kpi-card-value text-cyan" id="honors-top-gpa">10.00</div>
+              <div class="kpi-card-sub" id="honors-valedictorian-name">Aarohi Nair (CSE)</div>
+            </div>
+          </div>
+
+          <!-- Leaderboard Table -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="card-title">University Scholar Society Registry (Top Ranked)</h3>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <select class="form-select form-select-sm" id="honors-filter-dept" onchange="renderDeansHonorsRoll()">
+                  <option value="ALL">All Departments</option>
+                  <option value="CSE">CSE</option>
+                  <option value="ECE">ECE</option>
+                  <option value="AIML">AIML</option>
+                  <option value="AI&DS">AI&DS</option>
+                  <option value="IT">IT</option>
+                  <option value="ME">ME</option>
+                  <option value="EEE">EEE</option>
+                  <option value="CE">CE</option>
+                </select>
+                <select class="form-select form-select-sm" id="honors-filter-limit" onchange="renderDeansHonorsRoll()">
+                  <option value="ALL" selected>All Honor Scholars</option>
+                  <option value="1000">Top 1,000</option>
+                  <option value="500">Top 500</option>
+                  <option value="200">Top 200</option>
+                  <option value="100">Top 100</option>
+                  <option value="50">Top 50</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-container">
+              <table class="honors-leaderboard-table">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Honor Distinction</th>
+                    <th>Student ID</th>
+                    <th>Scholar Name</th>
+                    <th>Department</th>
+                    <th>CGPA</th>
+                    <th>Attendance</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-honors-tbody">
+                  <!-- Rendered via app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: ADMIN HISTORIC QUADRANGLE & HALLS DIRECTORY (NEW CLASSIC FEATURE) -->
+        <div class="tab-pane" id="pane-admin-campus">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Historic Quadrangle & Heritage Lecture Halls</h2>
+              <p class="section-subtitle">Architectural heritage facilities, seating capacities, and examination hall allocations across university quads</p>
+            </div>
+            <div>
+              <button class="btn btn-outline" onclick="showToast('Campus facilities synchronized with Welsh-Powell examination schedule', 'info')">
+                Check Hall Availability
+              </button>
+            </div>
+          </div>
+
+          <div class="quadrangle-grid" id="admin-quadrangle-grid">
+            <!-- Rendered via app.js -->
+          </div>
+        </div>
 
       </div>
     </main>
   </div>
 
-  <!-- Comprehensive Student Dossier Modal -->
-  <div class="modal-overlay" id="detail-modal">
-    <div class="modal-content glass-card">
+  <!-- ===================================================================== -->
+  <!-- MODALS CONTAINER                                                      -->
+  <!-- ===================================================================== -->
+
+  <!-- 1. AUTH & ROLE SWITCHER MODAL -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-content-medium">
       <div class="modal-header">
-        <h3 class="modal-title" id="modal-title">Student Academic Dossier</h3>
-        <button class="modal-close" id="modal-close" aria-label="Close modal">&times;</button>
+        <h3 class="modal-title">Sign In / Switch Portal Role</h3>
+        <button class="modal-close" onclick="closeAuthModal()">&times;</button>
       </div>
-      <div class="modal-body" id="modal-body">
-        <!-- Content inserted dynamically -->
+      <div class="modal-body">
+        <!-- Auth Tabs -->
+        <div class="auth-tabs">
+          <button class="auth-tab-btn active" id="auth-tab-student" onclick="switchAuthTab('student')">🎓 Student</button>
+          <button class="auth-tab-btn" id="auth-tab-teacher" onclick="switchAuthTab('teacher')">👨‍🏫 Faculty</button>
+          <button class="auth-tab-btn" id="auth-tab-admin" onclick="switchAuthTab('admin')">🛡️ Admin</button>
+          <button class="auth-tab-btn" id="auth-tab-register" onclick="switchAuthTab('register')">📝 Register</button>
+        </div>
+
+        <!-- Student Login Tab Form -->
+        <div id="auth-form-student">
+          <div class="form-group">
+            <label class="form-label">Student ID or Email</label>
+            <input type="text" id="login-student-id" class="form-input" placeholder="e.g. ET100072 or aarav@edutrack.edu" value="ET100072">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="login-student-pass" class="form-input" value="student123">
+          </div>
+          <button class="btn btn-primary w-100" style="width:100%;" onclick="submitStudentLogin()">Log In as Student</button>
+
+          <div class="demo-accounts-container">
+            <div class="demo-accounts-title">1-Click Quick Demo Student Accounts:</div>
+            <div class="demo-chips-grid">
+              <div class="demo-account-chip" onclick="quickLoginStudent('ET100072')">
+                <span class="demo-chip-id">ET100072</span>
+                <span class="demo-chip-name">Aarav Das (CSE &bull; Year 4)</span>
+                <span class="demo-chip-tag">CGPA: 8.03</span>
+              </div>
+              <div class="demo-account-chip" onclick="quickLoginStudent('ET100001')">
+                <span class="demo-chip-id">ET100001</span>
+                <span class="demo-chip-name">Kiran Gupta (ECE &bull; Year 1)</span>
+                <span class="demo-chip-tag">CGPA: 7.08</span>
+              </div>
+              <div class="demo-account-chip" onclick="quickLoginStudent('ET100014')">
+                <span class="demo-chip-id">ET100014</span>
+                <span class="demo-chip-name">Meera Naidu (ECE &bull; Year 1)</span>
+                <span class="demo-chip-tag">CGPA: 8.36</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Faculty Login Tab Form -->
+        <div id="auth-form-teacher" style="display:none;">
+          <div class="form-group">
+            <label class="form-label">Faculty ID or Email</label>
+            <input type="text" id="login-teacher-id" class="form-input" placeholder="e.g. F101" value="F101">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="login-teacher-pass" class="form-input" value="faculty123">
+          </div>
+          <button class="btn btn-primary w-100" style="width:100%;" onclick="submitTeacherLogin()">Log In as Faculty Member</button>
+
+          <div class="demo-accounts-container">
+            <div class="demo-accounts-title">1-Click Quick Demo Faculty Accounts:</div>
+            <div class="demo-chips-grid">
+              <div class="demo-account-chip" onclick="quickLoginTeacher('F101')">
+                <span class="demo-chip-id">F101</span>
+                <span class="demo-chip-name">Dr. Sharma (CSE &bull; Algorithms)</span>
+                <span class="demo-chip-tag">Prof.</span>
+              </div>
+              <div class="demo-account-chip" onclick="quickLoginTeacher('F104')">
+                <span class="demo-chip-id">F104</span>
+                <span class="demo-chip-name">Dr. Kumar (CSE &bull; Networks)</span>
+                <span class="demo-chip-tag">Assoc. Prof</span>
+              </div>
+              <div class="demo-account-chip" onclick="quickLoginTeacher('F108')">
+                <span class="demo-chip-id">F108</span>
+                <span class="demo-chip-name">Dr. Das (IT &bull; Web Development)</span>
+                <span class="demo-chip-tag">Dept Head</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Login Tab Form -->
+        <div id="auth-form-admin" style="display:none;">
+          <div class="form-group">
+            <label class="form-label">Administrator Username</label>
+            <input type="text" id="login-admin-user" class="form-input" value="admin">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="login-admin-pass" class="form-input" value="admin123">
+          </div>
+          <button class="btn btn-primary w-100" style="width:100%;" onclick="submitAdminLogin()">Log In as University Administrator</button>
+
+          <div class="demo-accounts-container">
+            <div class="demo-accounts-title">1-Click Quick Admin Access:</div>
+            <div class="demo-chips-grid">
+              <div class="demo-account-chip" onclick="quickLoginAdmin()">
+                <span class="demo-chip-id">admin</span>
+                <span class="demo-chip-name">University Registrar & System Administrator</span>
+                <span class="demo-chip-tag">Full Access</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Register Tab Form -->
+        <div id="auth-form-register" style="display:none;">
+          <div class="form-group">
+            <label class="form-label">I am registering as</label>
+            <select class="form-select" id="reg-role">
+              <option value="STUDENT">Student</option>
+              <option value="TEACHER">Faculty / Teacher</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="reg-name" class="form-input" placeholder="e.g. Ananya Rao">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <select class="form-select" id="reg-dept">
+                <option value="CSE">CSE (Computer Science)</option>
+                <option value="ECE">ECE (Electronics)</option>
+                <option value="ME">ME (Mechanical)</option>
+                <option value="EEE">EEE (Electrical)</option>
+                <option value="AIML">AIML (AI & ML)</option>
+                <option value="AI&DS">AI&DS (Data Science)</option>
+                <option value="IT">IT (Information Tech)</option>
+                <option value="CE">CE (Civil)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="reg-email" class="form-input" placeholder="e.g. ananya@edutrack.edu">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Create Password</label>
+            <input type="password" id="reg-pass" class="form-input" value="password123">
+          </div>
+          <button class="btn btn-primary w-100" style="width:100%;" onclick="submitRegistration()">Create Account & Sign In</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. OFFICIAL PRINTABLE HALL TICKET MODAL -->
+  <div class="modal-overlay" id="hallTicketModal">
+    <div class="modal-content-large" style="background:#fff;padding:24px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+        <span style="color:#0f172a;font-weight:700;font-size:0.9rem;">Official Examination Hall Ticket Document</span>
+        <div>
+          <button class="btn btn-sm btn-primary" onclick="window.print()">Print Document</button>
+          <button class="btn btn-sm btn-outline" style="color:#0f172a;border-color:#cbd5e1;" onclick="closeHallTicketModal()">Close</button>
+        </div>
+      </div>
+
+      <div class="hall-ticket-container" id="printable-hall-ticket">
+        <div class="hall-ticket-header">
+          <div class="ht-logo">🏛️</div>
+          <div class="ht-uni-title">
+            <h2>EDUTRACK AUTONOMOUS UNIVERSITY</h2>
+            <p>Office of the Controller of Examinations &bull; End Semester Examinations 2026</p>
+            <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;margin-top:2px;">OFFICIAL ADMIT CARD & HALL TICKET</div>
+          </div>
+          <div class="ht-qr">
+            <div>
+              <div style="font-size:1.1rem;">🔲</div>
+              <span>VERIFIED</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ht-student-grid">
+          <div>
+            <div class="ht-field-row"><span class="ht-field-label">Student ID:</span><span class="ht-field-val" id="ht-id">ET100072</span></div>
+            <div class="ht-field-row"><span class="ht-field-label">Candidate Name:</span><span class="ht-field-val" id="ht-name">Aarav Das</span></div>
+            <div class="ht-field-row"><span class="ht-field-label">Department:</span><span class="ht-field-val" id="ht-dept">Computer Science & Engineering (CSE)</span></div>
+            <div class="ht-field-row"><span class="ht-field-label">Degree & Year:</span><span class="ht-field-val" id="ht-year">B.Tech &bull; Year 4 (Semester 7)</span></div>
+            <div class="ht-field-row"><span class="ht-field-label">Examination Center:</span><span class="ht-field-val">Main Academic Block &bull; Campus Center</span></div>
+          </div>
+          <div>
+            <div class="ht-photo-box">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+              <span>PHOTO AFFIXED</span>
+            </div>
+          </div>
+        </div>
+
+        <table class="ht-table">
+          <thead>
+            <tr>
+              <th>Exam Code</th>
+              <th>Course Title</th>
+              <th>Date</th>
+              <th>Time Slot</th>
+              <th>Room ID</th>
+              <th>Candidate Sign</th>
+            </tr>
+          </thead>
+          <tbody id="ht-exams-tbody">
+            <!-- Dynamic Exam rows -->
+          </tbody>
+        </table>
+
+        <div class="ht-footer">
+          <div class="ht-instructions">
+            <strong>Important Rules for Candidates:</strong><br>
+            1. Candidates must produce this Hall Ticket alongside official university ID card.<br>
+            2. Mobile phones, smart watches, and programmable calculators are strictly prohibited.<br>
+            3. Candidates must occupy their designated seats 15 minutes before exam commencement.
+          </div>
+          <div class="ht-sig-block">
+            <div class="ht-sig-line"></div>
+            <div class="ht-sig-text">Controller of Examinations</div>
+            <div style="font-size:0.65rem;color:#64748b;">EduTrack University</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. SUBMIT ASSIGNMENT MODAL -->
+  <div class="modal-overlay" id="submitAssignmentModal">
+    <div class="modal-content-medium">
+      <div class="modal-header">
+        <h3 class="modal-title">Submit Course Assignment</h3>
+        <button class="modal-close" onclick="closeSubmitAssignmentModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Select Course</label>
+          <select class="form-select" id="sub-course-select">
+            <!-- Injected via app.js -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Assignment Task</label>
+          <select class="form-select" id="sub-task-select">
+            <option value="ASG101">Implement KMP and Rabin-Karp String Algorithms</option>
+            <option value="ASG102">Compare Database Normalization (3NF vs BCNF)</option>
+            <option value="ASG103">Design Flow Optimization for University Network</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Solution Submission Text / Code Repository Link</label>
+          <textarea class="form-textarea" id="sub-solution-text" rows="4" placeholder="Paste your algorithm code, GitHub repository link, or executive summary..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Attach File / Document (PDF / ZIP Simulation)</label>
+          <input type="file" class="form-input" id="sub-file-input">
+        </div>
+        <button class="btn btn-primary w-100" style="width:100%;" onclick="submitAssignmentAction()">Submit Assignment for Grading</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. UPLOAD STUDY MATERIAL MODAL (TEACHER) -->
+  <div class="modal-overlay" id="uploadMaterialModal">
+    <div class="modal-content-medium">
+      <div class="modal-header">
+        <h3 class="modal-title">Publish Course Note / Study Material</h3>
+        <button class="modal-close" onclick="closeUploadMaterialModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Course</label>
+          <select class="form-select" id="mat-course-select">
+            <option value="CS101">CS101 &bull; Algorithms</option>
+            <option value="CS102">CS102 &bull; Database Management Systems</option>
+            <option value="CS111">CS111 &bull; Computer Architecture</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Material Title</label>
+          <input type="text" id="mat-title" class="form-input" placeholder="e.g. Module 3: Dynamic Programming Lecture Slides">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Resource Category</label>
+            <select class="form-select" id="mat-type">
+              <option value="Lecture Notes">Lecture Notes</option>
+              <option value="PDF">PDF Handbook</option>
+              <option value="Lab Manual">Lab Manual</option>
+              <option value="Question Bank">Question Bank</option>
+              <option value="Book">Reference Book</option>
+              <option value="Video">Video Lecture</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Author / Faculty</label>
+            <input type="text" id="mat-author" class="form-input" value="Dr. Rajesh Sharma" readonly>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description / Summary</label>
+          <textarea class="form-textarea" id="mat-desc" rows="3" placeholder="Summary of topics covered in this resource..."></textarea>
+        </div>
+        <button class="btn btn-primary w-100" style="width:100%;" onclick="saveNewMaterialAction()">Publish Resource to Students</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. CREATE ASSIGNMENT MODAL (TEACHER) -->
+  <div class="modal-overlay" id="createAssignmentModal">
+    <div class="modal-content-medium">
+      <div class="modal-header">
+        <h3 class="modal-title">Create New Assignment / Assessment</h3>
+        <button class="modal-close" onclick="closeCreateAssignmentModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Target Course</label>
+          <select class="form-select" id="create-asg-course">
+            <option value="CS101">CS101 &bull; Algorithms</option>
+            <option value="CS102">CS102 &bull; Database Management Systems</option>
+            <option value="CS111">CS111 &bull; Computer Architecture</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Assignment Title</label>
+          <input type="text" id="create-asg-title" class="form-input" placeholder="e.g. Implement Suffix Array with O(n log n) construction">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Due Date</label>
+            <input type="date" id="create-asg-date" class="form-input" value="2026-11-20">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Max Score / Points</label>
+            <input type="number" id="create-asg-points" class="form-input" value="100">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Instructions for Students</label>
+          <textarea class="form-textarea" id="create-asg-instructions" rows="3" placeholder="Write specifications, submission format, and grading rubric..."></textarea>
+        </div>
+        <button class="btn btn-primary w-100" style="width:100%;" onclick="saveNewAssignmentAction()">Create & Broadcast Assignment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. GRADE STUDENT MODAL (TEACHER) -->
+  <div class="modal-overlay" id="gradeStudentModal">
+    <div class="modal-content-medium">
+      <div class="modal-header">
+        <h3 class="modal-title">Evaluate & Grade Submission</h3>
+        <button class="modal-close" onclick="closeGradeStudentModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Student</label>
+          <input type="text" id="grade-modal-student" class="form-input" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Assignment</label>
+          <input type="text" id="grade-modal-title" class="form-input" readonly>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Assignment Score (0 - 100)</label>
+            <input type="number" id="grade-modal-score" class="form-input" value="88" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Award Letter Grade</label>
+            <select class="form-select" id="grade-modal-letter">
+              <option value="A+">A+ (Outstanding)</option>
+              <option value="A" selected>A (Excellent)</option>
+              <option value="B">B (Good)</option>
+              <option value="C">C (Satisfactory)</option>
+              <option value="D">D (Pass)</option>
+              <option value="F">F (Fail)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Faculty Feedback Comments</label>
+          <textarea class="form-textarea" id="grade-modal-feedback" rows="3" placeholder="Enter feedback for student..."></textarea>
+        </div>
+        <button class="btn btn-primary w-100" style="width:100%;" onclick="submitGradingAction()">Save & Post Grade</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. AT-RISK WARNING NOTICE MODAL (TEACHER) -->
+  <div class="modal-overlay" id="atRiskModal">
+    <div class="modal-content-large">
+      <div class="modal-header">
+        <h3 class="modal-title">⚠️ At-Risk Students Mentorship Roster</h3>
+        <button class="modal-close" onclick="closeAtRiskModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-sm text-muted mb-3">The following students have attendance &lt; 75% or CGPA &lt; 6.0 in your courses. Issue automated mentorship notices.</p>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>Attendance</th>
+                <th>CGPA</th>
+                <th>Risk Factor</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="at-risk-tbody">
+              <!-- Rendered via app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. ADD STUDENT MODAL (ADMIN) -->
+  <div class="modal-overlay" id="addStudentModal">
+    <div class="modal-content-medium">
+      <div class="modal-header">
+        <h3 class="modal-title">Register New Student Record</h3>
+        <button class="modal-close" onclick="closeAddStudentModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Student ID</label>
+            <input type="text" id="add-stu-id" class="form-input" placeholder="e.g. ET110001" value="ET110001">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="add-stu-name" class="form-input" placeholder="e.g. Sanya Iyer">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Department</label>
+            <select class="form-select" id="add-stu-dept">
+              <option value="CSE">CSE</option>
+              <option value="ECE">ECE</option>
+              <option value="ME">ME</option>
+              <option value="EEE">EEE</option>
+              <option value="AIML">AIML</option>
+              <option value="AI&DS">AI&DS</option>
+              <option value="IT">IT</option>
+              <option value="CE">CE</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Academic Year</label>
+            <select class="form-select" id="add-stu-year">
+              <option value="1">Year 1</option>
+              <option value="2">Year 2</option>
+              <option value="3">Year 3</option>
+              <option value="4">Year 4</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Assigned Course</label>
+          <select class="form-select" id="add-stu-course">
+            <option value="Algorithms">Algorithms</option>
+            <option value="Web Development">Web Development</option>
+            <option value="Database Management Systems">Database Management Systems</option>
+            <option value="Operating Systems">Operating Systems</option>
+            <option value="Computer Networks">Computer Networks</option>
+            <option value="Software Engineering">Software Engineering</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">CGPA (0 - 10.0)</label>
+            <input type="number" step="0.01" id="add-stu-cgpa" class="form-input" value="8.10">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Attendance % (0 - 100)</label>
+            <input type="number" step="0.1" id="add-stu-att" class="form-input" value="86.5">
+          </div>
+        </div>
+        <button class="btn btn-primary w-100" style="width:100%;" onclick="saveNewStudentAction()">Register Student Record</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. EDIT STUDENT MODAL (ADMIN) -->
+  <div class="modal-overlay" id="editStudentModal">
+    <div class="modal-content-medium">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Student Record</h3>
+        <button class="modal-close" onclick="closeEditStudentModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-stu-id-hidden">
+        <div class="form-group">
+          <label class="form-label">Student ID</label>
+          <input type="text" id="edit-stu-id" class="form-input" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="edit-stu-name" class="form-input">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Department</label>
+            <input type="text" id="edit-stu-dept" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Year</label>
+            <input type="number" id="edit-stu-year" class="form-input" min="1" max="4">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">CGPA</label>
+            <input type="number" step="0.01" id="edit-stu-cgpa" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Attendance %</label>
+            <input type="number" step="0.1" id="edit-stu-att" class="form-input">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Exam Score</label>
+            <input type="number" step="0.1" id="edit-stu-exam" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Grade</label>
+            <select class="form-select" id="edit-stu-grade">
+              <option value="A+">A+</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="F">F</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary w-100" style="width:100%;" onclick="saveEditedStudentAction()">Update Record</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. STUDENT DETAIL MODAL (INSPECT) -->
+  <div class="modal-overlay" id="studentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-student-name">Student Information</h3>
+        <button class="modal-close" id="modal-close" onclick="closeStudentModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body-content">
+        <!-- Rendered via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. OFFICIAL ACADEMIC TRANSCRIPT & PARCHMENT DIPLOMA MODAL (NEW) -->
+  <div class="modal-overlay" id="transcriptModal">
+    <div class="modal-content-large" style="max-width:920px;background:#101726;padding:0;overflow:hidden;border:1px solid var(--gold-border);">
+      <div class="modal-header" style="background:rgba(8,16,30,0.9);border-bottom:1px solid var(--gold-border);padding:16px 24px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1.4rem;">🏛️</span>
+          <div>
+            <h3 class="modal-title" style="font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:0.04em;">Official Parchment Academic Transcript</h3>
+            <span style="font-size:0.75rem;color:var(--gold-300);">Authentic University Seal & Latin Honors Verification</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="btn btn-sm btn-primary" onclick="printOfficialTranscript()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print Parchment
+          </button>
+          <button class="modal-close" onclick="closeTranscriptModal()">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding:24px;max-height:80vh;overflow-y:auto;background:rgba(12,18,32,0.95);" id="modal-transcript-container">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 12. ARCHIVAL RARE BOOK TREATISE READER MODAL (NEW) -->
+  <div class="modal-overlay" id="rareBookReaderModal">
+    <div class="modal-content-large" style="max-width:860px;background:#0d1422;border:1px solid var(--gold-border);padding:0;overflow:hidden;">
+      <div class="modal-header" style="border-bottom:1px solid var(--gold-border);background:rgba(8,16,30,0.9);padding:16px 24px;">
+        <div>
+          <span class="rare-book-badge" id="reader-book-cat">ARCHIVAL MANUSCRIPT</span>
+          <h3 class="modal-title" id="reader-book-title" style="font-family:'Playfair Display',serif;font-size:1.25rem;">Treatise Title</h3>
+        </div>
+        <button class="modal-close" onclick="closeRareBookReaderModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:28px;max-height:78vh;overflow-y:auto;" id="reader-book-body">
+        <!-- Injected via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 13. SCHEDULE COLLEGIATE TUTORIAL MODAL (NEW) -->
+  <div class="modal-overlay" id="consultationModal">
+    <div class="modal-content-medium" style="background:#0f172a;border:1px solid var(--gold-border);">
+      <div class="modal-header" style="border-bottom:1px solid var(--gold-border);">
+        <h3 class="modal-title" style="font-family:'Cinzel',serif;">Schedule Collegiate Tutorial</h3>
+        <button class="modal-close" onclick="closeConsultationModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-sm text-muted mb-3">Book a 1-on-1 academic consultation, algorithmic thesis review, or coursework discussion with a Senior Fellow.</p>
+        <div class="form-group">
+          <label class="form-label">Select Senior Fellow / Faculty</label>
+          <select class="form-select" id="book-consult-fellow">
+            <option value="Dr. Rajesh Sharma (F101)">Dr. Rajesh Sharma &bull; Algorithms & Distributed Systems (Wren Quad Room 302)</option>
+            <option value="Dr. Ananya Reddy (F102)">Dr. Ananya Reddy &bull; Database Engineering (King's Hall Room 204)</option>
+            <option value="Prof. Vikram Deshmukh (F103)">Prof. Vikram Deshmukh &bull; Operating Systems & Kernels (Turing Cloister Room 108)</option>
+            <option value="Dr. Subhash Das (F104)">Dr. Subhash Das &bull; Web Systems & Architecture (Babbage Lab Room 210)</option>
+            <option value="Prof. Meera Sen (F105)">Prof. Meera Sen &bull; Networks & Cryptography (Newton Amphitheatre Room 112)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Consultation Topic / Purpose</label>
+          <input type="text" id="book-consult-topic" class="form-input" placeholder="e.g., Graph Vertex Coloring in Welsh-Powell Scheduler" value="Algorithmic Complexity & Exam Preparation">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Preferred Date</label>
+            <input type="date" id="book-consult-date" class="form-input" value="2026-11-04">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Preferred Time Slot</label>
+            <select class="form-select" id="book-consult-time">
+              <option value="10:00 AM - 10:45 AM">10:00 AM - 10:45 AM (Morning Session)</option>
+              <option value="11:30 AM - 12:15 PM">11:30 AM - 12:15 PM (Pre-Noon Session)</option>
+              <option value="02:30 PM - 03:15 PM" selected>02:30 PM - 03:15 PM (Afternoon Tutorial)</option>
+              <option value="04:00 PM - 04:45 PM">04:00 PM - 04:45 PM (Evening Collegiate)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Heritage Hall / Venue Preference</label>
+          <select class="form-select" id="book-consult-venue">
+            <option value="Wren Quadrangle Room 302">Wren Quadrangle Room 302 (Faculty Office)</option>
+            <option value="Babbage Computation Lab A">Babbage Computation Lab A</option>
+            <option value="Newtonian Seminar Room 2">Newtonian Seminar Room 2</option>
+            <option value="Virtual Collegial Video Link">Virtual Collegial Video Link (Encrypted)</option>
+          </select>
+        </div>
+        <button class="btn btn-primary w-100" style="width:100%;margin-top:10px;" onclick="submitConsultationBookingAction()">Confirm & Book Tutorial</button>
       </div>
     </div>
   </div>
@@ -773,7 +1882,7 @@
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toast-container"></div>
 
-  <!-- JavaScript Client Logic -->
-  <script src="app.js"></script>
+  <!-- Core Application Script -->
+  <script src="app.js?v=updated-all-pics"></script>
 </body>
 </html>

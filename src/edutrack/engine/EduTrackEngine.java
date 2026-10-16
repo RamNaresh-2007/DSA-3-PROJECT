@@ -6,20 +6,26 @@ import edutrack.model.*;
 import edutrack.string.*;
 import edutrack.suffix.*;
 import edutrack.dp.*;
+import edutrack.flow.*;
+import edutrack.approx.*;
+import edutrack.randomparallel.*;
+import edutrack.corpus.*;
 
 /**
  * EduTrack Engine — the central text-analytics and academic-data engine.
  *
- * <p>This engine ties together every algorithm from Modules 2-3 with the
- * university data model.  No {@code java.util.*} imports are used inside
- * the engine — only the hand-built data structures from {@code edutrack.core}.</p>
+ * <p>This engine ties together every algorithm from Modules 1-6 with the
+ * university data model and Indic Wikipedia question bank. No {@code java.util.*}
+ * imports are used inside the engine — only the hand-built data structures from {@code edutrack.core}.</p>
  *
- * <h3>Query families supported</h3>
+ * <h3>Query families supported across all 6 Modules</h3>
  * <ul>
- *   <li><b>String Algorithms (M2 — CO1):</b> KMP, Z-Function, Rabin-Karp, Aho-Corasick</li>
- *   <li><b>Suffix Structures (M2 — CO2):</b> Suffix Array, SA-IS, Kasai LCP, Suffix Tree, Suffix Automaton</li>
- *   <li><b>Advanced DP (M3 — CO3):</b> Levenshtein, Damerau-Levenshtein, Needleman-Wunsch,
- *       Smith-Waterman, Matrix-Chain, Optimal BST, Bitmask DP, Tree DP, SOS DP</li>
+ *   <li><b>Module 1 (TextHack Indic Corpus):</b> Indian-Language Wikipedia Question Bank</li>
+ *   <li><b>Module 2 (String & Suffix):</b> KMP, Z-Function, Rabin-Karp, Aho-Corasick, SA-IS, Kasai LCP, Suffix Tree/Automaton</li>
+ *   <li><b>Module 3 (Advanced DP):</b> Levenshtein, Damerau, Needleman-Wunsch, Smith-Waterman, MCM, Optimal BST, Bitmask TSP, Tree DP, SOS DP</li>
+ *   <li><b>Module 4 (Network Flow):</b> Ford-Fulkerson, Edmonds-Karp, Dinic, Min-Cut Duality, Bipartite Matching, Min-Cost Flow, Reductions</li>
+ *   <li><b>Module 5 (NP-Completeness & Approx):</b> Reduction Zoo, Vertex Cover 2-Approx, Knapsack FPTAS, FPT Buss Kernel, NP Advisor</li>
+ *   <li><b>Module 6 (Randomised & Parallel):</b> Miller-Rabin, Randomized QuickSort, Universal/Perfect Hashing, Reservoir Sampling, Blelloch Scan</li>
  * </ul>
  */
 public class EduTrackEngine {
@@ -37,6 +43,7 @@ public class EduTrackEngine {
     private CustomHashMap<String, SuffixArray> documentSuffixArrays;
     private CustomHashMap<String, SuffixTree> documentSuffixTrees;
     private CustomHashMap<String, SuffixAutomaton> documentSuffixAutomata;
+    private final TextHackEngine textHackEngine;
 
     public EduTrackEngine() {
         students    = new CustomArrayList<>();
@@ -50,6 +57,11 @@ public class EduTrackEngine {
         documentSuffixArrays   = new CustomHashMap<>();
         documentSuffixTrees    = new CustomHashMap<>();
         documentSuffixAutomata = new CustomHashMap<>();
+        textHackEngine         = new TextHackEngine();
+    }
+
+    public TextHackEngine getTextHackEngine() {
+        return textHackEngine;
     }
 
     // ====================================================================
@@ -628,6 +640,356 @@ public class EduTrackEngine {
         return new QueryResult(QueryType.ENROLLMENT_ANALYTICS,
                 setBitmasks.length + " sets", results, elapsed,
                 "Total distinct students across selected courses: " + unionSize + " [SOS DP]");
+    }
+
+    // ====================================================================
+    //  MODULE 4 — NETWORK FLOW
+    // ====================================================================
+
+    /**
+     * Edmonds-Karp maximum flow in O(VE^2).
+     */
+    public QueryResult computeEdmondsKarpFlow(FlowNetwork network, int s, int t) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        EdmondsKarp.FlowResult res = EdmondsKarp.solve(network, s, t);
+        results.add("Maximum flow transmitted: " + res.maxFlow + " units [Edmonds-Karp]");
+        results.add("Total BFS path augmentations: " + res.augmentations);
+        for (int i = 0; i < res.pathHistory.size(); i++) {
+            results.add(res.pathHistory.get(i));
+        }
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.MAX_FLOW_EDMONDS_KARP,
+                "s=" + s + ", t=" + t, results, elapsed,
+                "Computed maximum flow of " + res.maxFlow + " units across " + network.getNumVertices() + " nodes [Edmonds-Karp]");
+    }
+
+    /**
+     * Dinic's blocking flow algorithm in O(V^2 E) / O(E sqrt(V)).
+     */
+    public QueryResult computeDinicFlow(FlowNetwork network, int s, int t) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        Dinic.DinicResult res = Dinic.solve(network, s, t);
+        results.add("Maximum blocking flow: " + res.maxFlow + " units [Dinic]");
+        results.add("Level-graph phases: " + res.levelGraphPhases);
+        results.add(res.complexityAnalysis);
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.MAX_FLOW_DINIC,
+                "s=" + s + ", t=" + t, results, elapsed,
+                "Dinic algorithm transmitted " + res.maxFlow + " units in " + res.levelGraphPhases + " phases [Dinic]");
+    }
+
+    /**
+     * Min-Cut partition as the dual of maximum flow.
+     */
+    public QueryResult computeMinCut(FlowNetwork network, int s, int t) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        MinCut.CutResult res = MinCut.computeMinCut(network, s, t);
+        results.add("Minimum cut capacity: " + res.minCutCapacity + " [Min-Cut]");
+        results.add("Dual max flow value: " + res.maxFlowValue + " (Duality verified: " + res.dualityVerified + ")");
+        results.add("Set S (reachable from source): " + res.setS.size() + " vertices");
+        results.add("Set T (sink partition): " + res.setT.size() + " vertices");
+        results.add("Bottleneck cut edges crossing S -> T: " + res.cutEdges.size() + " edge(s)");
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.MIN_CUT_PARTITION,
+                "s=" + s + ", t=" + t, results, elapsed,
+                "Min-Cut partition completed with capacity " + res.minCutCapacity + " [Min-Cut Duality]");
+    }
+
+    /**
+     * Maximum bipartite matching & König's theorem student-lab assignment.
+     */
+    public QueryResult assignStudentsBipartite(int numStudents, int numProjects, CustomArrayList<int[]> edges) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        BipartiteMatching.MatchingResult res = BipartiteMatching.solve(numStudents, numProjects, edges);
+        results.add("Maximum matched pairs: " + res.matchingSize + " assignment(s) [Bipartite Matching]");
+        results.add("König's theorem duality: Min Vertex Cover size = " + (res.minVertexCoverLeft.size() + res.minVertexCoverRight.size())
+                + " (Matches matching size: " + res.konigTheoremSatisfied + ")");
+
+        for (int i = 0; i < Math.min(10, res.matchedPairs.size()); i++) {
+            int[] p = res.matchedPairs.get(i);
+            results.add("Assigned: Student " + p[0] + " -> Lab Project " + p[1]);
+        }
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.BIPARTITE_MATCHING_ASSIGNMENT,
+                numStudents + " students, " + numProjects + " projects", results, elapsed,
+                "Assigned " + res.matchingSize + " students to projects under König's theorem [Bipartite Matching]");
+    }
+
+    /**
+     * Min-Cost Max-Flow (SSP with SPFA) optimal assignment.
+     */
+    public QueryResult assignMinCostMaxFlow(FlowNetwork network, int s, int t) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        MinCostMaxFlow.MCMFResult res = MinCostMaxFlow.solve(network, s, t);
+        results.add("Maximum flow achieved: " + res.maxFlow + " units [MCMF]");
+        results.add("Minimum total cost: " + res.minCost + " preference cost units");
+        results.add("Shortest-path augmentations: " + res.augmentations);
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.MIN_COST_MAX_FLOW_ASSIGNMENT,
+                "s=" + s + ", t=" + t, results, elapsed,
+                "Achieved flow of " + res.maxFlow + " at minimum cost of " + res.minCost + " [Min-Cost Max-Flow]");
+    }
+
+    /**
+     * Project selection problem reduced to Min-Cut.
+     */
+    public QueryResult solveProjectSelection(int[] profits, CustomArrayList<int[]> dependencies) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        FlowReductions.ProjectSelectionResult res = FlowReductions.solveProjectSelection(profits, dependencies);
+        results.add("Optimal net profit: " + res.maxNetProfit + " [Project Selection Min-Cut]");
+        results.add("Selected projects count: " + res.selectedProjects.size() + " / " + profits.length);
+        results.add("Min-Cut bottleneck penalty: " + res.minCutCost);
+        results.add(res.explanation);
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.PROJECT_SELECTION_REDUCTION,
+                profits.length + " projects", results, elapsed,
+                "Optimal research project selection yielded net profit of " + res.maxNetProfit + " [Min-Cut Reduction]");
+    }
+
+    // ====================================================================
+    //  MODULE 5 — NP-COMPLETENESS & APPROXIMATION
+    // ====================================================================
+
+    /**
+     * Vertex Cover 2-approximation via maximal matching with ratio guarantee.
+     */
+    public QueryResult approximateVertexCover(int numVertices, int[][] edges) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        VertexCoverApproximation.ApproxResult res = VertexCoverApproximation.solve(numVertices, edges);
+        results.add("2-Approximation cover size: " + res.approxSize + " checkpoints [Vertex Cover 2-Approx]");
+        results.add("Maximal matching edges: " + res.maximalMatching.size() + " (lower bound OPT >= " + res.maximalMatching.size() + ")");
+        results.add("Guaranteed approximation ratio: <= " + res.theoreticalGuarantee);
+        if (res.exactOptSize > 0) {
+            results.add("Exact OPT cover size: " + res.exactOptSize + " (Empirical ratio: " + String.format("%.2f", res.empiricalRatio) + ")");
+        }
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.VERTEX_COVER_2_APPROX,
+                numVertices + " vertices, " + edges.length + " edges", results, elapsed,
+                "Calculated 2-approximation cover of size " + res.approxSize + " [Vertex Cover 2-Approx]");
+    }
+
+    /**
+     * 0/1 Knapsack FPTAS value scaling with (1 - epsilon) guarantee.
+     */
+    public QueryResult solveKnapsackFptas(int[] weights, int[] values, int capacity, double epsilon) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        KnapsackApproximation.KnapsackResult greedy = KnapsackApproximation.solveGreedy2Approx(weights, values, capacity);
+        KnapsackApproximation.KnapsackResult fptas = KnapsackApproximation.solveFPTAS(weights, values, capacity, epsilon);
+
+        results.add("Greedy 2-Approx Value: " + greedy.totalValue + " (Weight: " + greedy.totalWeight + "/" + capacity + ") [Greedy 2-Approx]");
+        results.add("FPTAS (" + String.format("%.0f%%", (1.0 - epsilon) * 100) + ") Value: " + fptas.totalValue
+                + " (Weight: " + fptas.totalWeight + "/" + capacity + ") [Knapsack FPTAS]");
+        results.add("Selected items count: " + fptas.selectedItemIds.size() + " items");
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.KNAPSACK_FPTAS_APPROX,
+                weights.length + " items, cap=" + capacity, results, elapsed,
+                "FPTAS computed solution with value " + fptas.totalValue + " [Knapsack FPTAS]");
+    }
+
+    /**
+     * Parameterized Vertex Cover via Buss Kernelization & Bounded Search Tree.
+     */
+    public QueryResult solveParameterizedVertexCover(int numVertices, int[][] edges, int k) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        ParameterizedVertexCover.FptResult res = ParameterizedVertexCover.solve(numVertices, edges, k);
+        results.add("Feasible within budget k=" + k + ": " + (res.feasible ? "YES" : "NO") + " [FPT Kernelization]");
+        results.add("Kernel size after Buss reduction: " + res.kernelVertices + " vertices, " + res.kernelEdges + " edges");
+        results.add(res.diagnosis);
+        if (res.feasible) {
+            results.add("Chosen vertex cover: " + res.vertexCover.size() + " nodes");
+        }
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.FPT_VERTEX_COVER_KERNEL,
+                "k=" + k + " on " + numVertices + " nodes", results, elapsed,
+                "FPT Buss kernelization " + (res.feasible ? "found" : "proved no") + " cover of size <= " + k + " [FPT]");
+    }
+
+    /**
+     * Reduction Zoo step-through (3-SAT to CLIQUE to IS to VC).
+     */
+    public QueryResult verifyReductionZoo(CustomArrayList<ReductionZoo.Clause> formula, boolean[] assignment) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        ReductionZoo.ReductionResult res = ReductionZoo.reduce3SatToClique(formula, assignment);
+        results.add("From: " + res.fromProblem + " -> To: " + res.toProblem + " [Reduction Zoo]");
+        results.add(res.reductionDetails);
+        results.add("Witness verified: " + res.witnessValid);
+        results.add(res.certificateAnalysis);
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.REDUCTION_ZOO_VERIFICATION,
+                formula.size() + " clauses", results, elapsed,
+                "Verified polynomial-time reduction from 3-SAT to CLIQUE [Reduction Zoo]");
+    }
+
+    // ====================================================================
+    //  MODULE 6 — RANDOMISED & PARALLEL ALGORITHMS
+    // ====================================================================
+
+    /**
+     * Miller-Rabin probabilistic primality test with witness construction.
+     */
+    public QueryResult testMillerRabinPrimality(long candidate, int rounds) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        MillerRabin.PrimalityResult res = MillerRabin.testProbabilistic(candidate, rounds);
+        results.add("Candidate: " + candidate + " -> " + (res.isPrime ? "PRIME (Probabilistic)" : "COMPOSITE (Definite)") + " [Miller-Rabin]");
+        if (res.witness != null) {
+            results.add("Non-trivial composite witness: base a = " + res.witness);
+        }
+        for (int i = 0; i < res.roundDetails.size(); i++) {
+            results.add(res.roundDetails.get(i));
+        }
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.MILLER_RABIN_PRIMALITY,
+                "candidate=" + candidate, results, elapsed,
+                "Miller-Rabin confirmed " + candidate + " is " + (res.isPrime ? "prime" : "composite") + " [Miller-Rabin]");
+    }
+
+    /**
+     * Randomized QuickSort vs Deterministic QuickSort comparison.
+     */
+    public QueryResult analyzeRandomizedQuickSort(int[] arr) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        RandomizedQuickSort.SortMetrics rand = RandomizedQuickSort.sortRandomized(arr);
+        RandomizedQuickSort.SortMetrics det = RandomizedQuickSort.sortDeterministic(arr);
+
+        results.add("Array size: " + arr.length + " elements");
+        results.add("Randomized QuickSort: " + rand.comparisons + " comparisons (Recursion depth: " + rand.maxRecursionDepth + ") [Las Vegas]");
+        results.add("Theoretical Expected 2n ln(n): " + String.format("%.0f", rand.theoreticalExpectedComparisons) + " comparisons");
+        results.add("Deterministic QuickSort: " + det.comparisons + " comparisons (Recursion depth: " + det.maxRecursionDepth + ")");
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.RANDOMIZED_QUICKSORT_ANALYSIS,
+                arr.length + " elements", results, elapsed,
+                "Randomized QuickSort sorted array in " + rand.comparisons + " comparisons [Randomized QuickSort]");
+    }
+
+    /**
+     * FKS Two-Level Perfect Hashing lookup with guaranteed O(1) worst-case time.
+     */
+    public QueryResult lookupFksPerfectHashing(CustomArrayList<String> keys, CustomArrayList<String> values, String queryKey) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        PerfectHashing<String> ph = PerfectHashing.build(keys, values);
+        PerfectHashing.PerfectHashMetrics m = ph.getMetrics();
+        results.add("FKS Perfect Hash Table constructed: " + m.totalKeys + " keys into " + m.totalSecondarySlots + " slots [FKS O(1)]");
+        results.add("Space overhead ratio: " + String.format("%.2f", m.spaceOverheadRatio) + " (Linear space O(n))");
+        results.add("Primary rehashes needed: " + m.primaryRehashes);
+
+        String val = ph.get(queryKey);
+        results.add("Query lookup '" + queryKey + "': " + (val != null ? ("Found -> " + val) : "Key not found") + " in guaranteed O(1) time!");
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.PERFECT_HASHING_FKS,
+                "key=" + queryKey, results, elapsed,
+                "FKS Perfect Hash Table executed O(1) lookup for '" + queryKey + "' [FKS Perfect Hashing]");
+    }
+
+    /**
+     * Reservoir sampling audit on continuous event/log stream.
+     */
+    public QueryResult auditReservoirStream(CustomArrayList<String> stream, int sampleSize) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        ReservoirSampling<String> sampler = new ReservoirSampling<>(sampleSize);
+        for (int i = 0; i < stream.size(); i++) {
+            sampler.feed(stream.get(i));
+        }
+
+        results.add("Total stream elements processed: " + sampler.getTotalSeen() + " [Reservoir Sampling]");
+        results.add("Reservoir capacity: " + sampleSize);
+        results.add("Inclusion probability per item: " + String.format("%.4f", sampler.getInclusionProbability()) + " (k / N)");
+
+        CustomArrayList<String> res = sampler.getReservoir();
+        for (int i = 0; i < Math.min(8, res.size()); i++) {
+            results.add("Sample #" + (i + 1) + ": " + res.get(i));
+        }
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.RESERVOIR_STREAM_SAMPLING,
+                sampleSize + " samples from " + stream.size() + " items", results, elapsed,
+                "Reservoir sampling collected " + sampleSize + " uniform audit items [Algorithm R]");
+    }
+
+    /**
+     * Blelloch work-efficient parallel scan and Brent's theorem analysis.
+     */
+    public QueryResult executeParallelScanBlelloch(int[] input) {
+        long t0 = System.nanoTime();
+        CustomArrayList<String> results = new CustomArrayList<>();
+
+        ParallelPrimitives.ScanResult scan = ParallelPrimitives.blellochParallelScan(input);
+        ParallelPrimitives.ParallelMetrics m = scan.metrics;
+
+        results.add("Blelloch Parallel Scan: Total sum = " + scan.totalSum + " [Blelloch Scan]");
+        results.add("Total Work T_1: " + m.workT1 + " ops, Span T_inf: " + m.spanTInfinity + " levels");
+        results.add("Theoretical Parallelism (T_1 / T_inf): " + String.format("%.1f", m.theoreticalParallelism) + "x");
+        results.add("Brent's Theorem Speedup: 8 cores -> " + String.format("%.2f", m.brentSpeedupCores[2]) + "x, 16 cores -> "
+                + String.format("%.2f", m.brentSpeedupCores[3]) + "x, 64 cores -> " + String.format("%.2f", m.brentSpeedupCores[5]) + "x");
+
+        long elapsed = System.nanoTime() - t0;
+        return new QueryResult(QueryType.PARALLEL_SCAN_BLELLOCH,
+                input.length + " elements", results, elapsed,
+                "Blelloch work-efficient parallel prefix sum completed in O(log n) span [Parallel Scan]");
+    }
+
+    // ====================================================================
+    //  MODULE 1 — TEXTHACK INDIC WIKIPEDIA CORPUS
+    // ====================================================================
+
+    /**
+     * Queries the Wikipedia corpus via KMP pattern matching.
+     */
+    public QueryResult queryIndicCorpusPattern(String pattern) {
+        TextHackEngine.TextHackQueryResult res = textHackEngine.queryPatternSearch(pattern);
+        return new QueryResult(QueryType.INDIC_WIKIPEDIA_QUERY,
+                pattern, res.answers, res.executionNs,
+                "Found " + res.answers.size() + " matches across English Wikipedia corpus [TextHack Engine]");
+    }
+
+    /**
+     * Queries the Wikipedia corpus via Levenshtein fuzzy match.
+     */
+    public QueryResult queryIndicCorpusFuzzy(String query, int maxDist) {
+        TextHackEngine.TextHackQueryResult res = textHackEngine.queryFuzzyMatch(query, maxDist);
+        return new QueryResult(QueryType.INDIC_WIKIPEDIA_QUERY,
+                query, res.answers, res.executionNs,
+                "Found " + res.answers.size() + " fuzzy matches across English Wikipedia titles [TextHack Engine]");
     }
 
     // ====================================================================

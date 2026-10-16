@@ -41,10 +41,17 @@ public class DataLoader {
             File f = new File(preferredPath);
             if (f.exists()) return f;
         }
-        File f1 = new File(DEFAULT_EDUTRACK_CSV);
-        if (f1.exists()) return f1;
-        File f2 = new File(BACKUP_EDUTRACK_CSV);
-        if (f2.exists()) return f2;
+        String[] candidates = {
+            DEFAULT_EDUTRACK_CSV,
+            BACKUP_EDUTRACK_CSV,
+            "../" + DEFAULT_EDUTRACK_CSV,
+            "../" + BACKUP_EDUTRACK_CSV,
+            "../../" + DEFAULT_EDUTRACK_CSV
+        };
+        for (String c : candidates) {
+            File f = new File(c);
+            if (f.exists()) return f;
+        }
         return new File("EduTrack.csv");
     }
 

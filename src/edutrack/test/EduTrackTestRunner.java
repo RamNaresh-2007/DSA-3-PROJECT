@@ -8,12 +8,16 @@ import edutrack.engine.*;
 import edutrack.model.*;
 import edutrack.app.*;
 import edutrack.data.DataLoader;
+import edutrack.flow.*;
+import edutrack.approx.*;
+import edutrack.randomparallel.*;
+import edutrack.corpus.*;
 
 /**
- * Comprehensive Automated Test Suite for EduTrack.
+ * Comprehensive Automated Test Suite for EduTrack & TextHack.
  *
  * <p>Validates all hand-built data structures, algorithms, service layers,
- * and query engines with zero external libraries or java.util.* dependencies.</p>
+ * and query engines across all 6 modules with zero external libraries or java.util.* dependencies.</p>
  */
 public class EduTrackTestRunner {
 
@@ -52,13 +56,17 @@ public class EduTrackTestRunner {
 
     public static void main(String[] args) {
         System.out.println("===============================================================");
-        System.out.println("      EDUTRACK AUTOMATED TEST RUNNER (ALL MODULES 1 - 3)      ");
+        System.out.println("      EDUTRACK AUTOMATED TEST RUNNER (ALL MODULES 1 - 6)      ");
         System.out.println("===============================================================\n");
 
         testCoreDataStructures();
+        testModule1TextHackIndicCorpus();
         testModule1StringAlgorithms();
         testModule2SuffixStructures();
         testModule3AdvancedDP();
+        testModule4NetworkFlow();
+        testModule5NPCompletenessAndApproximation();
+        testModule6RandomisedAndParallelAlgorithms();
         testServiceLayersAndEngines();
         testAdminAndDatasets();
 
@@ -380,4 +388,203 @@ public class EduTrackTestRunner {
             assertTrue("DataLoader encountered exception: " + e.getMessage(), false);
         }
     }
+
+    // =========================================================================
+    // MODULE 1: TEXTHACK INDIC CORPUS & ADVANCED QUESTION BANK
+    // =========================================================================
+    private static void testModule1TextHackIndicCorpus() {
+        System.out.println("\n--- Testing Module 1: TextHack English Corpus & Question Bank ---");
+
+        CustomArrayList<IndicCorpus.IndicArticle> articles = IndicCorpus.getArticles();
+        assertTrue("Corpus contains 8 English articles", articles.size() >= 8);
+
+        TextHackEngine the = new TextHackEngine();
+        TextHackEngine.TextHackQueryResult patRes = the.queryPatternSearch("Turing");
+        assertTrue("TextHack pattern search for Turing in English", patRes.answers.size() > 0);
+
+        TextHackEngine.TextHackQueryResult fuzRes = the.queryFuzzyMatch("ramanujan", 3);
+        assertTrue("TextHack fuzzy match for Ramanujan in English", fuzRes.answers.size() > 0);
+
+        TextHackEngine.TextHackQueryResult primeRes = the.queryLargePrimePrimality(1000000007L);
+        assertTrue("TextHack primality test for 1000000007", primeRes.answers.get(1).contains("PRIME"));
+
+        int[][] graph = {{0, 1, 10}, {1, 2, 8}, {0, 2, 5}};
+        TextHackEngine.TextHackQueryResult flowRes = the.queryCitationFlow(graph, 3, 0, 2);
+        assertTrue("TextHack citation flow computed", flowRes.answers.size() >= 3);
+    }
+
+    // =========================================================================
+    // MODULE 4: NETWORK FLOW
+    // =========================================================================
+    private static void testModule4NetworkFlow() {
+        System.out.println("\n--- Testing Module 4: Network Flow ---");
+
+        // 1. Edmonds-Karp & Dinic on classic flow network
+        FlowNetwork fn1 = new FlowNetwork(6);
+        fn1.addEdge(0, 1, 16);
+        fn1.addEdge(0, 2, 13);
+        fn1.addEdge(1, 2, 10);
+        fn1.addEdge(1, 3, 12);
+        fn1.addEdge(2, 1, 4);
+        fn1.addEdge(2, 4, 14);
+        fn1.addEdge(3, 2, 9);
+        fn1.addEdge(3, 5, 20);
+        fn1.addEdge(4, 3, 7);
+        fn1.addEdge(4, 5, 4);
+
+        EdmondsKarp.FlowResult ekRes = EdmondsKarp.solve(fn1, 0, 5);
+        assertEquals("Edmonds-Karp max flow", 23, ekRes.maxFlow);
+        assertTrue("Edmonds-Karp augmentations > 0", ekRes.augmentations > 0);
+
+        Dinic.DinicResult dinicRes = Dinic.solve(fn1, 0, 5);
+        assertEquals("Dinic max flow matches Edmonds-Karp", 23, dinicRes.maxFlow);
+        assertTrue("Dinic level phases > 0", dinicRes.levelGraphPhases > 0);
+
+        // 2. Min-Cut Duality
+        MinCut.CutResult cutRes = MinCut.computeMinCut(fn1, 0, 5);
+        assertEquals("Min-Cut capacity equals Max Flow", 23, cutRes.minCutCapacity);
+        assertTrue("Max-Flow Min-Cut duality theorem verified", cutRes.dualityVerified);
+        assertTrue("Cut set S contains source 0", cutRes.setS.contains(0));
+        assertTrue("Cut set T contains sink 5", cutRes.setT.contains(5));
+
+        // 3. Bipartite Matching & König's Theorem
+        CustomArrayList<int[]> matchEdges = new CustomArrayList<>();
+        matchEdges.add(new int[]{0, 0});
+        matchEdges.add(new int[]{1, 1});
+        matchEdges.add(new int[]{2, 2});
+        matchEdges.add(new int[]{3, 3});
+        matchEdges.add(new int[]{4, 4});
+
+        BipartiteMatching.MatchingResult matchRes = BipartiteMatching.solve(5, 5, matchEdges);
+        assertEquals("Bipartite matching size", 5, matchRes.matchingSize);
+        assertTrue("König's theorem satisfied", matchRes.konigTheoremSatisfied);
+
+        // 4. Min-Cost Max-Flow
+        FlowNetwork mcmfNet = new FlowNetwork(4);
+        mcmfNet.addEdge(0, 1, 2, 1);
+        mcmfNet.addEdge(0, 2, 1, 2);
+        mcmfNet.addEdge(1, 3, 1, 1);
+        mcmfNet.addEdge(2, 3, 2, 1);
+        MinCostMaxFlow.MCMFResult mcmfRes = MinCostMaxFlow.solve(mcmfNet, 0, 3);
+        assertEquals("Min-Cost Max-Flow total flow", 2, mcmfRes.maxFlow);
+        assertEquals("Min-Cost Max-Flow total cost", 5, mcmfRes.minCost);
+
+        // 5. Project Selection Reduction to Min-Cut
+        int[] profits = {10, -5, 15, -20};
+        CustomArrayList<int[]> deps = new CustomArrayList<>();
+        deps.add(new int[]{0, 1}); // P0 requires P1
+        deps.add(new int[]{2, 3}); // P2 requires P3
+        FlowReductions.ProjectSelectionResult projRes = FlowReductions.solveProjectSelection(profits, deps);
+        assertEquals("Project selection net profit", 5, projRes.maxNetProfit);
+    }
+
+    // =========================================================================
+    // MODULE 5: NP-COMPLETENESS & APPROXIMATION
+    // =========================================================================
+    private static void testModule5NPCompletenessAndApproximation() {
+        System.out.println("\n--- Testing Module 5: NP-Completeness & Approximation ---");
+
+        // 1. Reduction Zoo: 3-SAT to CLIQUE
+        CustomArrayList<ReductionZoo.Clause> formula = new CustomArrayList<>();
+        formula.add(new ReductionZoo.Clause(1, 2, -3));
+        formula.add(new ReductionZoo.Clause(-1, -2, 3));
+        boolean[] assignment = {true, false, true};
+        ReductionZoo.ReductionResult redRes = ReductionZoo.reduce3SatToClique(formula, assignment);
+        assertTrue("Reduction Zoo 3-SAT to CLIQUE witness verified", redRes.witnessValid);
+
+        // 2. Vertex Cover 2-Approximation
+        int[][] graphEdges = {
+                {0, 1}, {1, 2}, {2, 3}, {3, 0}, {0, 2}
+        };
+        VertexCoverApproximation.ApproxResult vcRes = VertexCoverApproximation.solve(4, graphEdges);
+        assertTrue("Vertex Cover 2-Approx size <= 2 * OPT", vcRes.approxSize <= 2 * vcRes.exactOptSize);
+        assertTrue("Vertex Cover covers edges", vcRes.approxSize >= vcRes.exactOptSize);
+
+        // 3. Knapsack Greedy & FPTAS
+        int[] w = {10, 20, 30};
+        int[] v = {60, 100, 120};
+        KnapsackApproximation.KnapsackResult greedy = KnapsackApproximation.solveGreedy2Approx(w, v, 50);
+        assertTrue("Knapsack greedy within capacity", greedy.totalWeight <= 50);
+        assertTrue("Knapsack greedy value positive", greedy.totalValue >= 160);
+
+        KnapsackApproximation.KnapsackResult fptas = KnapsackApproximation.solveFPTAS(w, v, 50, 0.1);
+        assertTrue("Knapsack FPTAS within capacity", fptas.totalWeight <= 50);
+        assertEquals("Knapsack FPTAS optimal value", 220, fptas.totalValue);
+
+        // 4. Parameterized Vertex Cover (FPT Buss Kernel)
+        int[][] fptEdges = {{0, 1}, {0, 2}, {0, 3}, {1, 2}};
+        ParameterizedVertexCover.FptResult fptRes = ParameterizedVertexCover.solve(4, fptEdges, 2);
+        assertTrue("FPT Buss Kernel finds cover of size <= 2", fptRes.feasible);
+
+        // 5. NP Advisor Checklist
+        NPHardnessAdvisor.Diagnosis tspDiag = NPHardnessAdvisor.diagnose("tsp tour");
+        assertTrue("NP Advisor classifies TSP as NP-Hard", tspDiag.isNPHard);
+
+        NPHardnessAdvisor.Diagnosis flowDiag = NPHardnessAdvisor.diagnose("capacity assignment flow");
+        assertTrue("NP Advisor classifies Flow as Polynomial", !flowDiag.isNPHard);
+    }
+
+    // =========================================================================
+    // MODULE 6: RANDOMISED & PARALLEL ALGORITHMS
+    // =========================================================================
+    private static void testModule6RandomisedAndParallelAlgorithms() {
+        System.out.println("\n--- Testing Module 6: Randomised & Parallel Algorithms ---");
+
+        // 1. Miller-Rabin Primality Test
+        MillerRabin.PrimalityResult prime1 = MillerRabin.testProbabilistic(1000000007L, 12);
+        assertTrue("Miller-Rabin 1000000007 is prime", prime1.isPrime);
+
+        MillerRabin.PrimalityResult comp1 = MillerRabin.testProbabilistic(1000000008L, 5);
+        assertTrue("Miller-Rabin 1000000008 is composite", !comp1.isPrime);
+
+        // Carmichael Numbers defeat Fermat but NOT Miller-Rabin!
+        MillerRabin.PrimalityResult carmichael561 = MillerRabin.testProbabilistic(561, 10);
+        assertTrue("Miller-Rabin detects Carmichael number 561 as composite", !carmichael561.isPrime);
+
+        MillerRabin.PrimalityResult carmichael1105 = MillerRabin.testProbabilistic(1105, 10);
+        assertTrue("Miller-Rabin detects Carmichael number 1105 as composite", !carmichael1105.isPrime);
+
+        MillerRabin.PrimalityResult carmichael1729 = MillerRabin.testDeterministic(1729);
+        assertTrue("Miller-Rabin detects Hardy-Ramanujan 1729 as composite", !carmichael1729.isPrime);
+
+        // 2. Randomized QuickSort Expected Runtime
+        int[] worstCase = new int[100];
+        for (int i = 0; i < 100; i++) worstCase[i] = 100 - i;
+        RandomizedQuickSort.SortMetrics randSort = RandomizedQuickSort.sortRandomized(worstCase);
+        assertTrue("Randomized QuickSort correctly sorted", randSort.verifiedSorted);
+        assertTrue("Randomized QuickSort comparisons tracked", randSort.comparisons > 0);
+
+        // 3. Universal Hashing
+        UniversalHashing uh = new UniversalHashing(10);
+        int h1 = uh.hash(12345);
+        assertTrue("Universal hash slot in [0, 9]", h1 >= 0 && h1 < 10);
+
+        // 4. FKS Two-Level Perfect Hashing O(1)
+        CustomArrayList<String> keys = new CustomArrayList<>();
+        CustomArrayList<String> vals = new CustomArrayList<>();
+        keys.add("CS101"); vals.add("Intro CS");
+        keys.add("CS102"); vals.add("Data Structures");
+        keys.add("CS103"); vals.add("Algorithms");
+        PerfectHashing<String> ph = PerfectHashing.build(keys, vals);
+        assertEquals("FKS Perfect Hash lookup CS102", "Data Structures", ph.get("CS102"));
+        assertEquals("FKS Perfect Hash lookup CS103", "Algorithms", ph.get("CS103"));
+        assertTrue("FKS Perfect Hash missing key returns null", ph.get("CS999") == null);
+
+        // 5. Reservoir Sampling Uniform Distribution
+        ReservoirSampling<Integer> sampler = new ReservoirSampling<>(5);
+        for (int i = 0; i < 100; i++) sampler.feed(i);
+        assertEquals("Reservoir size equals k", 5, sampler.getReservoir().size());
+        assertEquals("Reservoir total seen", 100, (int) sampler.getTotalSeen());
+
+        // 6. Blelloch Parallel Scan & Brent's Theorem
+        int[] scanInput = {1, 2, 3, 4, 5, 6, 7, 8};
+        ParallelPrimitives.ScanResult scanRes = ParallelPrimitives.blellochParallelScan(scanInput);
+        assertEquals("Blelloch parallel scan total sum", 36, scanRes.totalSum);
+        assertEquals("Blelloch scan prefix[0]", 0, scanRes.exclusivePrefixSum[0]);
+        assertEquals("Blelloch scan prefix[1]", 1, scanRes.exclusivePrefixSum[1]);
+        assertEquals("Blelloch scan prefix[2]", 3, scanRes.exclusivePrefixSum[2]);
+        assertEquals("Blelloch scan prefix[3]", 6, scanRes.exclusivePrefixSum[3]);
+        assertTrue("Brent's theorem speedup on 8 cores > 1.0", scanRes.metrics.brentSpeedupCores[2] > 1.0);
+    }
 }
+
