@@ -312,7 +312,7 @@ const STATE = {
     sort: 'cgpa-desc',
     search: '',
     page: 1,
-    limit: 10000
+    limit: 50
   },
   cachedFilteredStudents: []
 };
@@ -331,59 +331,52 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadData() {
-  showToast("Initializing EduTrack platform...", "info");
+  // Step 1: Instant visual paint - render UI immediately without waiting for network
+  renderActiveRoleViews();
+  applyFiltersAndRenderStudents();
+  renderCourses();
+  renderFaculty();
 
-  // Step 1: Attempt to connect to Java backend API
+  // Step 2: Concurrently fetch Java backend API and CSV in parallel
   let connected = false;
   try {
-    const res = await fetch('/api/stats', { cache: 'no-store' });
-    if (res.ok) {
-      const stats = await res.json();
-      STATE.stats = stats;
+    const [statsRes, coursesRes, facultyRes] = await Promise.all([
+      fetch('/api/stats', { cache: 'no-store' }).catch(() => null),
+      fetch('/api/courses').catch(() => null),
+      fetch('/api/faculty').catch(() => null)
+    ]);
+
+    if (statsRes && statsRes.ok) {
+      STATE.stats = await statsRes.json();
       STATE.isBackendConnected = true;
       connected = true;
       updateEngineModeBadge(true);
-      console.log("[EduTrack] Connected to Java Backend Server (port 8080/8000)");
     }
+    if (coursesRes && coursesRes.ok) STATE.courses = await coursesRes.json();
+    if (facultyRes && facultyRes.ok) STATE.faculty = await facultyRes.json();
   } catch (e) {
-    console.log("[EduTrack] Java backend not running or different port. Using high-speed client-side engine.");
+    console.log("[EduTrack] Operating in client-side engine mode.");
   }
 
-  // Step 2: Load Courses & Faculty from API or fallback
-  if (connected) {
-    try {
-      const [cRes, fRes] = await Promise.all([
-        fetch('/api/courses'),
-        fetch('/api/faculty')
-      ]);
-      if (cRes.ok) STATE.courses = await cRes.json();
-      if (fRes.ok) STATE.faculty = await fRes.json();
-    } catch (e) {
-      console.warn("Could not fetch auxiliary data from API", e);
-    }
-  }
-
-  // Step 3: Load EduTrack.csv directly (either to seed client store or full dataset)
+  // Step 3: Fast Ingestion of EduTrack.csv
   await loadCsvDataset();
 
-  // Step 4: Render initial views
+  // Step 4: High-speed update of all views once data is ready
   renderActiveRoleViews();
   applyFiltersAndRenderStudents();
   renderCourses();
   renderFaculty();
   initDsaPlayground();
 
-  showToast(`Loaded ${STATE.students.length.toLocaleString()} student records from EduTrack.csv`, "success");
+  showToast(`⚡ High-Speed Engine Ready • ${STATE.students.length.toLocaleString()} Records Active`, "success");
 }
 
 async function loadCsvDataset() {
   const candidateUrls = [
     '/EduTrack.csv',
-    '/data/EduTrack.csv',
     'EduTrack.csv',
-    'data/EduTrack.csv',
-    '../EduTrack.csv',
-    '../../EduTrack.csv'
+    '/data/EduTrack.csv',
+    'data/EduTrack.csv'
   ];
 
   let csvText = null;
@@ -392,7 +385,6 @@ async function loadCsvDataset() {
       const res = await fetch(url);
       if (res.ok) {
         csvText = await res.text();
-        console.log(`[EduTrack] Ingested EduTrack.csv from ${url}`);
         break;
       }
     } catch (ignored) {}
@@ -401,7 +393,6 @@ async function loadCsvDataset() {
   if (csvText && csvText.trim().length > 100) {
     parseCsvToState(csvText);
   } else {
-    // If running in restricted environment without local web server, use sample generation or API
     if (STATE.isBackendConnected) {
       await fetchStudentsFromApi();
     } else {
@@ -528,6 +519,9 @@ function parseCsvToState(csvText) {
 }
 
 function parseCsvLine(text) {
+  if (text.indexOf('"') === -1) {
+    return text.split(',');
+  }
   const result = [];
   let cur = '';
   let inQuotes = false;
@@ -640,16 +634,25 @@ function updateEngineModeBadge(connected) {
 function renderDashboard() {
   if (!STATE.stats) calculateStatsLocally();
   const st = STATE.stats;
+  if (!st) return;
 
   // KPI Metrics
-  document.getElementById('stat-total-students').textContent = (st.totalStudents || STATE.students.length).toLocaleString();
-  document.getElementById('stat-total-courses').textContent = (st.totalCourses || STATE.courses.length).toString();
-  document.getElementById('stat-total-faculty').textContent = (st.totalFaculty || STATE.faculty.length).toString();
+  const elStu = document.getElementById('stat-total-students') || document.getElementById('admin-stat-students');
+  if (elStu) elStu.textContent = (st.totalStudents || STATE.students.length).toLocaleString();
+
+  const elCourses = document.getElementById('stat-total-courses') || document.getElementById('admin-stat-courses');
+  if (elCourses) elCourses.textContent = (st.totalCourses || STATE.courses.length).toString();
+
+  const elFac = document.getElementById('stat-total-faculty') || document.getElementById('admin-stat-faculty');
+  if (elFac) elFac.textContent = (st.totalFaculty || STATE.faculty.length).toString();
 
   const total = st.totalStudents || 1;
   const passRate = ((st.passCount / total) * 100).toFixed(1);
-  document.getElementById('stat-pass-rate').textContent = `${passRate}%`;
-  document.getElementById('stat-avg-cgpa').textContent = `Avg CGPA: ${st.averageCgpa} • Att: ${st.averageAttendance}%`;
+  const elPass = document.getElementById('stat-pass-rate') || document.getElementById('admin-stat-pass');
+  if (elPass) elPass.textContent = `${passRate}%`;
+
+  const elAvg = document.getElementById('stat-avg-cgpa');
+  if (elAvg) elAvg.textContent = `Avg CGPA: ${st.averageCgpa} • Att: ${st.averageAttendance}%`;
 
   // Department distribution
   renderDepartmentBars(st.departmentDistribution);
@@ -666,7 +669,7 @@ function renderDashboard() {
 }
 
 function renderDepartmentBars(deptDist) {
-  const container = document.getElementById('dept-distribution-container');
+  const container = document.getElementById('admin-dept-chart') || document.getElementById('dept-distribution-container');
   if (!container || !deptDist) return;
 
   const entries = Object.entries(deptDist);
@@ -705,7 +708,7 @@ function getDeptFullName(dept) {
 }
 
 function renderGradeSpectrum(gradeDist) {
-  const container = document.getElementById('cgpa-tiers-container');
+  const container = document.getElementById('admin-grade-chart') || document.getElementById('cgpa-tiers-container');
   if (!container || !gradeDist) return;
 
   const total = STATE.students.length || 1;
@@ -1360,30 +1363,34 @@ function renderAdmins() {
 // ============================================================================
 
 function initDsaPlayground() {
-  // Sub-tabs
-  document.querySelectorAll('.dsa-nav-tab').forEach(tab => {
-    tab.addEventListener('click', (e) => {
-      const btn = e.currentTarget || tab;
-      document.querySelectorAll('.dsa-nav-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.dsa-subpane').forEach(p => p.classList.remove('active'));
+  try {
+    // Sub-tabs
+    document.querySelectorAll('.dsa-nav-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        const btn = e.currentTarget || tab;
+        document.querySelectorAll('.dsa-nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.dsa-subpane').forEach(p => p.classList.remove('active'));
 
-      btn.classList.add('active');
-      const target = btn.getAttribute('data-dsatab');
-      STATE.activeDsaTab = target;
-      const pane = document.getElementById(`dsapane-${target}`);
-      if (pane) pane.classList.add('active');
+        btn.classList.add('active');
+        const target = btn.getAttribute('data-dsatab');
+        STATE.activeDsaTab = target;
+        const pane = document.getElementById(`dsapane-${target}`);
+        if (pane) pane.classList.add('active');
+      });
     });
-  });
 
-  // Run initial visualizations across all modules
-  initTextHackModule();
-  runKmpSearch();
-  runZSearch();
-  runLevenshteinVisualizer();
-  runFlowAlgorithm('dinic');
-  runVertexCoverApprox();
-  runNpHardnessAdvisor();
-  runMillerRabinTest();
+    // Run initial visualizations across all modules if corresponding containers exist
+    initTextHackModule();
+    if (document.getElementById('kmp-query-input')) runKmpSearch();
+    if (document.getElementById('z-query-input')) runZSearch();
+    if (document.getElementById('dp-str1')) runLevenshteinVisualizer();
+    if (document.getElementById('flow-algo-name')) runFlowAlgorithm('dinic');
+    if (document.getElementById('vc-canvas-box')) runVertexCoverApprox();
+    if (document.getElementById('reduction-zoo-box')) runNpHardnessAdvisor();
+    if (document.getElementById('mr-candidate-input')) runMillerRabinTest();
+  } catch (err) {
+    console.warn("[EduTrack] DSA playground initial runners skipped:", err);
+  }
 }
 
 // --- 1. KMP ALGORITHM ---
@@ -4538,8 +4545,33 @@ function renderFacultyAnalytics() {
 // ============================================================================
 
 function renderAdminDashboard() {
-  renderDepartmentBars(STATE.stats ? STATE.stats.departmentDistribution : null);
-  renderGradeSpectrum(STATE.stats ? STATE.stats.gradeDistribution : null);
+  if (!STATE.stats) calculateStatsLocally();
+  const st = STATE.stats;
+  if (!st) return;
+
+  const total = st.totalStudents || STATE.students.length || 10000;
+  const passRate = ((st.passCount / total) * 100).toFixed(1);
+
+  const elStu = document.getElementById('admin-stat-students');
+  if (elStu) elStu.textContent = (st.totalStudents || STATE.students.length).toLocaleString();
+
+  const elCourses = document.getElementById('admin-stat-courses');
+  if (elCourses) elCourses.textContent = (st.totalCourses || STATE.courses.length || 12).toString();
+
+  const elFac = document.getElementById('admin-stat-faculty');
+  if (elFac) elFac.textContent = (st.totalFaculty || STATE.faculty.length || 10).toString();
+
+  const elPass = document.getElementById('admin-stat-pass');
+  if (elPass) elPass.textContent = `${passRate}%`;
+
+  const elCgpa = document.getElementById('admin-stat-cgpa');
+  if (elCgpa) elCgpa.textContent = (st.averageCgpa || 7.35).toFixed(2);
+
+  const elAtt = document.getElementById('admin-stat-att');
+  if (elAtt) elAtt.textContent = `${(st.averageAttendance || 81.9).toFixed(1)}%`;
+
+  renderDepartmentBars(st.departmentDistribution);
+  renderGradeSpectrum(st.gradeDistribution);
 }
 
 function renderAdminFaculty() {

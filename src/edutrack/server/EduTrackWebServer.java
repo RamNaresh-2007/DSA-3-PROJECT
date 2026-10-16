@@ -37,6 +37,7 @@ public class EduTrackWebServer {
     private final int port;
     private final EduTrackEngine engine;
     private final DataLoader.EduTrackDataset dataset;
+    private final CustomHashMap<String, byte[]> fileCache = new CustomHashMap<>();
     private HttpServer server;
 
     public EduTrackWebServer(int port, EduTrackEngine engine, DataLoader.EduTrackDataset dataset) {
@@ -112,11 +113,20 @@ public class EduTrackWebServer {
             }
 
             if (targetFile != null && targetFile.exists() && !targetFile.isDirectory()) {
-                byte[] bytes = Files.readAllBytes(targetFile.toPath());
+                String cacheKey = targetFile.getAbsolutePath();
+                byte[] bytes;
+                synchronized (fileCache) {
+                    bytes = fileCache.get(cacheKey);
+                    if (bytes == null) {
+                        bytes = Files.readAllBytes(targetFile.toPath());
+                        fileCache.put(cacheKey, bytes);
+                    }
+                }
                 String mime = getMimeType(targetFile.getName());
 
                 addCorsHeaders(exchange);
                 exchange.getResponseHeaders().set("Content-Type", mime + "; charset=utf-8");
+                exchange.getResponseHeaders().set("Cache-Control", "no-cache");
                 exchange.sendResponseHeaders(200, bytes.length);
                 try (OutputStream os = exchange.getResponseBody()) {
                     os.write(bytes);

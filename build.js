@@ -23,7 +23,7 @@ fs.writeFileSync('sources.txt', argContent);
 
 try {
   console.log('Compiling ' + files.length + ' Java files...');
-  execSync('javac -d bin @sources.txt', { stdio: 'inherit' });
+  execSync('javac --release 21 -d bin @sources.txt', { stdio: 'inherit' });
   console.log('Compilation succeeded!');
 } finally {
   if (fs.existsSync('sources.txt')) fs.unlinkSync('sources.txt');

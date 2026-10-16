@@ -1,7 +1,7 @@
 @echo off
-title EduTrack — Academic Platform & Web Server
+title EduTrack - Academic Platform and Web Server
 echo ========================================================
-echo   Starting EduTrack University Platform & Web Server
+echo   Starting EduTrack University Platform and Web Server
 echo ========================================================
 echo.
 
