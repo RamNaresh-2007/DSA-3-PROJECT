@@ -5,14 +5,12 @@ echo   Starting EduTrack University Platform & Web Server
 echo ========================================================
 echo.
 
-if not exist "bin\edutrack\Main.class" (
-    echo Compiling Java source files...
-    node build.js
-    if errorlevel 1 (
-        echo Compilation failed.
-        pause
-        exit /b 1
-    )
+echo Compiling Java source files...
+node build.js
+if errorlevel 1 (
+    echo Compilation failed.
+    pause
+    exit /b 1
 )
 
 echo Starting Java Backend and Web Server...

@@ -6,14 +6,16 @@
             "name": "Main",
             "request": "launch",
             "mainClass": "edutrack.Main",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
         },
         {
             "type": "java",
             "name": "Run EduTrack (Web Server & CLI)",
             "request": "launch",
             "mainClass": "edutrack.Main",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
